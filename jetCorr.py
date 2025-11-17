@@ -49,7 +49,20 @@ class jetJERC(Module):
         return phi
 
     def analyze(self, event):
+        """
+        This is the main analysis function.
+        It processes jets, applies corrections, and returns True.
+        """
         jets = Collection(event, "Jet")
+        
+        # --- 修正：将 self.isMC 改为 self.is_mc，与 __init__ 中定义的变量名保持一致 ---
+        if self.is_mc:
+            # 确保随机数种子在32位范围内
+            # event.event 是一个64位整数，直接用作seed会报错
+            # 我们通过取模运算将其约束在 2**32 - 1 的范围内
+            seed_id = event.event % (2**32) 
+            np.random.seed(seed_id)
+        
         if self.is_mc:
             gen_jets = Collection(event, "GenJet")
             gen_jets_pt = np.array([gen_jet.pt for gen_jet in gen_jets])
@@ -148,13 +161,21 @@ class jetJERC(Module):
                 elif JERsf > 1:
                     sigma = JER * np.sqrt(JERsf**2 - 1)
                     # vvv ADD THESE LINES vvv
-                    seed_id = int(event.event + (jet.eta + 2.5) * 10000)
+                    # 构造一个jet专属的、唯一的seed
+                    base_seed = int(event.event + (jet.eta + 2.5) * 10000)
+                    # --- 最终修正：在正确的位置对seed进行取模运算 ---
+                    seed_id = base_seed % (2**32)
+
                     # print(f"  [SMEARING] Method: Smearing (no GenJet match)")
                     # print(f"  [SMEARING] Seed ID: {seed_id}, Sigma: {sigma:<10.8f}")
                     np.random.seed(seed_id)
                     smear_factor = np.random.normal(1.0, sigma)
-                    np.random.seed(seed_id) # Reset seed for consistency if needed elsewhere
+                    
+                    # 为了不确定度计算，需要重置seed以获得相同的随机数
+                    np.random.seed(seed_id) 
                     smear_factor_up = np.random.normal(1.0, JER * np.sqrt(JERsf_up**2 - 1))
+                    
+                    np.random.seed(seed_id)
                     smear_factor_dn = np.random.normal(1.0, JER * np.sqrt(JERsf_dn**2 - 1))
                 
                 smear_factor = max(0.0, smear_factor)
@@ -186,6 +207,7 @@ class jetJERC(Module):
             else:
                 # ======================= "AFTER" BLOCK (Data) =======================
                 # print(f"  [OUTPUT] pt: {final_pt:<10.8f} eta: {jet.eta:<10.8f} mass: {final_mass:<10.8f}")
+                pass
 
             pt_corr.append(final_pt)
             mass_corr.append(final_mass)

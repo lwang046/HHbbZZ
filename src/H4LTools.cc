@@ -800,7 +800,7 @@ bool H4LTools::ZZSelection(){
     {
         jet1index = jetidx[0];
         jet2index = jetidx[1];
-        if(Jet_pt[jetidx[1]]>Jet_pt[jetidx[0]])
+        if(Jet_btagPNetB[jetidx[1]]>Jet_btagPNetB[jetidx[0]])
         {
             jet1index = jetidx[1];
             jet2index = jetidx[0];
@@ -810,17 +810,17 @@ bool H4LTools::ZZSelection(){
     {
         jet1index = jetidx[0];
         jet2index = jetidx[1];
-        if(Jet_pt[jetidx[1]]>Jet_pt[jetidx[0]])
+        if(Jet_btagPNetB[jetidx[1]]>Jet_btagPNetB[jetidx[0]])
         {
             jet1index = jetidx[1];
             jet2index = jetidx[0];
         }
         for (unsigned int pj=2;pj<jetidx.size();pj++){
-            if((Jet_pt[jetidx[pj]]>Jet_pt[jet1index])&&(Jet_pt[jetidx[pj]]>Jet_pt[jet2index])){
+            if((Jet_btagPNetB[jetidx[pj]]>Jet_btagPNetB[jet1index])&&(Jet_btagPNetB[jetidx[pj]]>Jet_btagPNetB[jet2index])){
                 jet2index = jet1index;
                 jet1index = jetidx[pj];
             }
-            else if((Jet_pt[jetidx[pj]]>Jet_pt[jet2index])&&(Jet_pt[jetidx[pj]]<Jet_pt[jet1index])){
+            else if((Jet_btagPNetB[jetidx[pj]]>Jet_btagPNetB[jet2index])&&(Jet_btagPNetB[jetidx[pj]]<Jet_btagPNetB[jet1index])){
                 jet2index = jetidx[pj];
             }
         }

@@ -10,8 +10,8 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 
 
 class HZZAnalysisCppProducer(Module):
-    # MODIFIED: Add pu_json and pu_name to the constructor with default None
-    def __init__(self,year,cfgFile,isMC,isFSR, pu_json=None, pu_name=None):
+    # MODIFIED: Add pu_json, pu_name, and the new btagSF_on flag
+    def __init__(self,year,cfgFile,isMC,isFSR, btagSF_on=False, pu_json=None, pu_name=None):
         base = "$CMSSW_BASE/src/PhysicsTools/NanoAODTools/python/postprocessing/analysis/nanoAOD_skim"
         ROOT.gSystem.Load("%s/JHUGenMELA/MELA/data/el9_amd64_gcc12/libJHUGenMELAMELA.so" % base)
         ROOT.gSystem.Load("%s/JHUGenMELA/MELA/data/el9_amd64_gcc12/libjhugenmela.so" % base)
@@ -41,6 +41,8 @@ class HZZAnalysisCppProducer(Module):
                     ".L %s/interface/H4LTools.h" % base)
         self.year = year
         self.isMC = isMC
+        # --- NEW: Store the btagSF_on flag ---
+        self.btagSF_on = btagSF_on
         self.genworker = ROOT.GenAnalysis()
         with open(cfgFile, 'r') as ymlfile:
           cfg = yaml.full_load(ymlfile)
@@ -333,8 +335,25 @@ class HZZAnalysisCppProducer(Module):
                                  xm.pdgId, xm.charge, xm.pfRelIso03_all)
         for xf in fsrPhotons:
             self.worker.SetFsrPhotons(xf.dROverEt2,xf.eta,xf.phi,xf.pt,xf.relIso03,xf.electronIdx,xf.muonIdx)
+        
+        # ======================= FINAL DYNAMIC JET PROCESSING (CORRECTED) =======================
         for xj in jets:
-            self.worker.SetJets(xj.pt,xj.eta,xj.phi,xj.mass,xj.jetId,xj.btagDeepFlavB,xj.btagPNetB,xj.btagRobustParTAK4B, 0.8, 7)
+            sf_dj, sf_pn, sf_rpt = 1.0, 1.0, 1.0
+            
+            # If b-tag SFs are enabled, try to read the actual values from the event.
+            # If they don't exist for some reason, the default of 1.0 will be used.
+            if self.btagSF_on:
+                sf_dj  = getattr(xj, "btagSF_deepJet_shape", 1.0)
+                sf_pn  = getattr(xj, "btagSF_particleNet_shape", 1.0)
+                sf_rpt = getattr(xj, "btagSF_robustParticleTransformer_shape", 1.0)
+            
+            # ALWAYS call the C++ function with all 13 arguments.
+            # If SFs are off, the default values (1.0) will be passed.
+            self.worker.SetJets(xj.pt, xj.eta, xj.phi, xj.mass, xj.jetId,
+                                 xj.btagDeepFlavB, xj.btagPNetB, xj.btagRobustParTAK4B, 0.8,
+                                 7, sf_dj, sf_pn, sf_rpt)
+        # ========================================================================================
+
         self.worker.BatchFsrRecovery_Run3()
         
         self.worker.LeptonSelection()

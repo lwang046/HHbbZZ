@@ -82,17 +82,20 @@ class H4LTools {
       }
 
       void SetJets(float Jet_pt_, float Jet_eta_, float Jet_phi_, float Jet_mass_, int Jet_jetId_, float Jet_btagDeepFlavB_, float Jet_btagPNetB_, float Jet_btagRobustParTAK4B_, float Jet_btagDeepC_,
-                         int Jet_puId_){
+                         int Jet_puId_, float sf_dj, float sf_pn, float sf_rpt){
         Jet_pt.push_back(Jet_pt_); 
         Jet_phi.push_back(Jet_phi_);
         Jet_eta.push_back(Jet_eta_);
         Jet_mass.push_back(Jet_mass_);
         Jet_btagDeepC.push_back(Jet_btagDeepC_);
         Jet_jetId.push_back(Jet_jetId_);
-        Jet_puId.push_back(Jet_puId_); //1 or 0?
+        Jet_puId.push_back(Jet_puId_);
         Jet_btagDeepFlavB.push_back(Jet_btagDeepFlavB_);
         Jet_btagPNetB.push_back(Jet_btagPNetB_);
         Jet_btagRobustParTAK4B.push_back(Jet_btagRobustParTAK4B_);
+        Jet_sf_deepjet.push_back(sf_dj);
+        Jet_sf_particlenet.push_back(sf_pn);
+        Jet_sf_rpt.push_back(sf_rpt);
       }
     
       
@@ -123,28 +126,6 @@ class H4LTools {
       void SetElectronsGen(int Electron_genPartIdx_){
         Electron_genPartIdx.push_back(Electron_genPartIdx_);
       }
-      /*void SetMuons(TTreeReaderArray<float> *Muon_pt_, TTreeReaderArray<float> *Muon_eta_,
-                        TTreeReaderArray<float> *Muon_phi_, TTreeReaderArray<float> *Muon_mass_, TTreeReaderArray<bool> *Muon_isGlobal_, TTreeReaderArray<bool> *Muon_isTracker_,
-                        TTreeReaderArray<float> *Muon_dxy_, TTreeReaderArray<float> *Muon_dz_,TTreeReaderArray<float> *Muon_sip3d_, TTreeReaderArray<float> *Muon_ptErr_,
-                        TTreeReaderArray<int> *Muon_nTrackerLayers_, TTreeReaderArray<bool> *Muon_isPFcand_, TTreeReaderArray<int> *Muon_pdgId_,TTreeReaderArray<int> *Muon_charge_, TTreeReaderArray<float> *Muon_pfRelIso03_all_,
-                        TTreeReaderArray<int> *Muon_genPartIdx_){
-        Muon_pt = Muon_pt_; 
-        Muon_phi = Muon_phi_;
-        Muon_eta = Muon_eta_;
-        Muon_mass = Muon_mass_;
-        Muon_isGlobal = Muon_isGlobal_;
-        Muon_isTracker = Muon_isTracker_;
-        Muon_dxy = Muon_dxy_;
-        Muon_dz = Muon_dz_;
-        Muon_sip3d = Muon_sip3d_;
-        Muon_ptErr = Muon_ptErr_;
-        Muon_nTrackerLayers = Muon_nTrackerLayers_;
-        Muon_isPFcand = Muon_isPFcand_;
-        Muon_pdgId = Muon_pdgId_;
-        Muon_charge = Muon_charge_;
-        Muon_pfRelIso03_all = Muon_pfRelIso03_all_;
-        Muon_genPartIdx = Muon_genPartIdx_;
-      }*/
       void SetFsrPhotons(float FsrPhoton_dROverEt2_, float FsrPhoton_eta_,
                         float FsrPhoton_phi_, float FsrPhoton_pt_, float FsrPhoton_relIso03_, int FsrPhoton_electronIdx_, int FsrPhoton_muonIdx_){
         FsrPhoton_dROverEt2.push_back(FsrPhoton_dROverEt2_); 
@@ -155,22 +136,9 @@ class H4LTools {
         FsrPhoton_electronIdx.push_back(FsrPhoton_electronIdx_);
         FsrPhoton_muonIdx.push_back(FsrPhoton_muonIdx_);
       }
-      /*void SetFsrPhotons(TTreeReaderArray<float> *FsrPhoton_dROverEt2_, TTreeReaderArray<float> *FsrPhoton_eta_,
-                        TTreeReaderArray<float> *FsrPhoton_phi_, TTreeReaderArray<float> *FsrPhoton_pt_, 
-                        TTreeReaderArray<float> *FsrPhoton_relIso03_){
-        FsrPhoton_dROverEt2 = FsrPhoton_dROverEt2_; 
-        FsrPhoton_phi = FsrPhoton_phi_;
-        FsrPhoton_eta = FsrPhoton_eta_;
-        FsrPhoton_pt = FsrPhoton_pt_;
-        FsrPhoton_relIso03 = FsrPhoton_relIso03_;
-        
-      }*/
       void SetGenParts(float GenPart_pt_){
         GenPart_pt.push_back(GenPart_pt_);
       }
-      /*void SetGenParts(TTreeReaderArray<float> *GenPart_pt_){
-        GenPart_pt = GenPart_pt_;
-      }*/
       void SetObjectNum(unsigned nElectron_,unsigned nMuon_,unsigned nJet_,unsigned nFsrPhoton_){
         nElectron = nElectron_; 
         nMuon = nMuon_;
@@ -290,6 +258,9 @@ class H4LTools {
         Muon_isTracker.clear();Muon_isGlobal.clear();Muon_isPFcand.clear();
         Jet_pt.clear();Jet_phi.clear();Jet_eta.clear();Jet_mass.clear();Jet_btagDeepC.clear();Jet_btagDeepFlavB.clear();Jet_btagPNetB.clear();Jet_btagRobustParTAK4B.clear();
         Jet_jetId.clear();Jet_puId.clear(); Zlep1lepindex.clear();Zlep2lepindex.clear();
+        Jet_sf_deepjet.clear();
+        Jet_sf_particlenet.clear();
+        Jet_sf_rpt.clear();
         FsrPhoton_dROverEt2.clear();FsrPhoton_phi.clear();FsrPhoton_eta.clear();FsrPhoton_pt.clear();FsrPhoton_relIso03.clear(); FsrPhoton_electronIdx.clear(); FsrPhoton_muonIdx.clear();
         GenPart_pt.clear();
         Zlist.clear();
@@ -353,7 +324,6 @@ class H4LTools {
       int cut4e, cut4mu, cut2e2mu, cutZZ4e, cutZZ4mu, cutZZ2e2mu, cutm4l4e, cutm4l4mu, cutm4l2e2mu, cutghost2e2mu, cutQCD2e2mu, cutLepPt2e2mu, cutghost4e, cutQCD4e, cutLepPt4e, cutghost4mu, cutQCD4mu, cutLepPt4mu;
       float pTL1, etaL1, phiL1, massL1, pTL2, etaL2, phiL2, massL2, pTL3, etaL3, phiL3, massL3, pTL4, etaL4, phiL4, massL4;
       float pTj1, etaj1, phij1, mj1, pTj2, etaj2, phij2, mj2;
-
       
       
     private:
@@ -363,6 +333,9 @@ class H4LTools {
 
       std::vector<float> Jet_pt,Jet_phi,Jet_eta,Jet_mass,Jet_btagDeepC,Jet_btagDeepFlavB,Jet_btagPNetB,Jet_btagRobustParTAK4B;
       std::vector<int> Jet_jetId,Jet_puId;
+      std::vector<float> Jet_sf_deepjet;
+      std::vector<float> Jet_sf_particlenet;
+      std::vector<float> Jet_sf_rpt;
 
       std::vector<float> Muon_pt,Muon_phi,Muon_eta,Muon_mass,Muon_dxy,Muon_dz,Muon_sip3d,Muon_ptErr,Muon_pfRelIso03_all;
       std::vector<int> Muon_nTrackerLayers,Muon_genPartIdx,Muon_pdgId,Muon_charge;
@@ -373,7 +346,7 @@ class H4LTools {
       std::vector<float> GenPart_pt;
       
       
-      unsigned nElectron,nMuon,nJet,nGenPart,nFsrPhoton;
+      unsigned nElectron,nMuon,nJet,nGenPart,nFsrPhoton,nGenJet;
 
 
 
