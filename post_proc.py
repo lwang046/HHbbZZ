@@ -42,11 +42,13 @@ def main():
     if args.inputFile.endswith(".txt"):
         testfilelist = getListFromFile(args.inputFile)
     else:
-        # For single file input, add the remote prefix if not already present
-        if not testfilelist[0].startswith("root://"):
-            testfilelist = ["root://cms-xrd-global.cern.ch/" + testfilelist[0]]
-        else:
+        # single-file input: accept root:// remote or local path; if bare name provided, prepend xrootd prefix
+        if args.inputFile.startswith("root://"):
             testfilelist = [args.inputFile]
+        elif os.path.exists(args.inputFile):
+            testfilelist = [args.inputFile]
+        else:
+            testfilelist = ["root://cms-xrd-global.cern.ch/" + args.inputFile]
     
     if not testfilelist:
         print(f"ERROR: No input files found from {args.inputFile}. Exiting.")
@@ -99,31 +101,48 @@ def main():
 
     # --- CORE LOGIC: Get all correction modules and PU info from the config file ---
     modulesToRun, pu_params = setup_corrections(args, year, isMC, first_file)
-    
+     
     # --- Add analysis-specific modules that ALWAYS run ---
     cfgFile = f"Input_{year}.yml"
-    
+     
     # --- NEW: Check if b-tag SFs will be calculated ---
-    btagSF_on = any(isinstance(m, btagSFProducer) for m in modulesToRun)
-    
-    # The HZZ C++ module needs the PU info, which we pass to it.
-    # If corrections are disabled, pu_params will be an empty dict, and the module should handle it.
-    modulesToRun.append(HZZAnalysisCppProducer(year, cfgFile, isMC, isFSR, btagSF_on=btagSF_on, **pu_params))
-    
+    # robust btagSF detection (instance or callable factory)
+    def _is_btag_mod(m):
+        try:
+            if isinstance(m, btagSFProducer): return True
+        except Exception:
+            pass
+        try:
+            name = getattr(m, "__name__", None) or getattr(m, "__class__", type(m)).__name__
+            return "btagsf" in name.lower()
+        except Exception:
+            return False
+    btagSF_on = any(_is_btag_mod(m) for m in modulesToRun)
+
+    # The HZZ C++ module needs the PU info; try new signature, fallback to old if necessary
+    try:
+        modulesToRun.append(HZZAnalysisCppProducer(year, cfgFile, isMC, isFSR, btagSF_on=btagSF_on, **pu_params))
+    except TypeError:
+        modulesToRun.append(HZZAnalysisCppProducer(year, cfgFile, isMC, isFSR))
+     
     # --- Setup PostProcessor ---
     jsonInput = None
     if not isMC:
         json_map = {2022: "golden_Json/Cert_Collisions2022_355100_362760_Golden.json", 2023: "golden_Json/Cert_Collisions2023_366442_370790_Golden.json"}
         jsonInput = json_map.get(year)
-
+ 
     output_drop_file = "keep_and_drop_data.txt" if not isMC else "keep_and_drop.txt"
-
+ 
     print(f"--- Running PostProcessor for Year: {year}, isMC: {isMC} ---")
     print(f"--- {len(modulesToRun)} modules will be run: ---")
     for m in modulesToRun:
-        print(f"  - {m.__class__.__name__}")
+        try:
+            name = m.__class__.__name__
+        except Exception:
+            name = getattr(m, "__name__", str(m))
+        print(f"  - {name}")
     print("-------------------------------------------------")
-
+ 
     try:
         p = PostProcessor(".",
                           files_to_process, # <-- Use the (potentially local) file list
@@ -132,6 +151,7 @@ def main():
                           modules=modulesToRun,
                           provenance=True,
                           outputbranchsel=output_drop_file,
+                          jsonInput=jsonInput if not isMC else None,
                           maxEntries=args.entriesToRun if args.entriesToRun > 0 else None,
                           haddFileName=args.outputFile
                           )
