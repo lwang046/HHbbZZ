@@ -36,8 +36,8 @@ def main(args):
 
     # Create log files
     import infoCreaterGit
-    SumamryOfCurrentSubmission = input("\n\nWrite summary for current job submission: ")
-    infoLogFiles = infoCreaterGit.BasicInfoCreater('summary.dat',SumamryOfCurrentSubmission)
+    SummaryOfCurrentSubmission = input("\n\nWrite summary for current job submission: ")
+    infoLogFiles = infoCreaterGit.BasicInfoCreater('summary.dat',SummaryOfCurrentSubmission)
     infoLogFiles.generate_git_patch_and_log()
 
     # Get CMSSW directory path and name
@@ -59,7 +59,7 @@ def main(args):
     os.system('cp ' + CMSSWRel+".tgz" + ' '+storeDir+'/' + CMSSWRel+".tgz")
 
     post_proc_to_run = "post_proc.py"
-    command = "python "+post_proc_to_run
+    command = "python3 "+post_proc_to_run
 
     Transfer_Input_Files = ("keep_and_drop.txt")     # FIXME: Generalise this.
     # Transfer_Input_Files = ("Cert_271036-284044_13TeV_PromptReco_Collisions16_JSON.txt, " +
@@ -79,7 +79,7 @@ def main(args):
         outjdl_file.write("Transfer_Input_Files = "+Transfer_Input_Files + ",  " + post_proc_to_run+"\n")
         outjdl_file.write("x509userproxy = $ENV(X509_USER_PROXY)\n")
         outjdl_file.write("requirements = TARGET.OpSysAndVer =?= \"AlmaLinux9\"\n")
-        outjdl_file.write("MY.WantOS = \"el7\"\n")
+        outjdl_file.write("MY.WantOS = \"el9\"\n")
         count = 0
         count_jobs = 0
         for SampleDASName in in_file:
@@ -180,11 +180,12 @@ def main(args):
     outScript.close();
     os.system("chmod 777 "+condor_file_name+".sh");
 
+
     print("\n#===> Set Proxy Using:")
     print("voms-proxy-init --voms cms --valid 168:00")
-    print("\n# It is assumed that the proxy is created in file: /tmp/x509up_u48539. Update this in below two lines:")
-    print("cp /tmp/x509up_u48539 ~/")
-    print("export X509_USER_PROXY=~/x509up_u48539")
+    print("\n# It is assumed that the proxy is created in file: /tmp/x509up_u83403. Update this in below two lines:")
+    print("cp /tmp/x509up_u83403 ~/")
+    print("export X509_USER_PROXY=~/x509up_u83403")
     print("\n#Submit jobs:")
     print(("condor_submit "+condor_file_name+".jdl"))
     #os.system("condor_submit "+condor_file_name+".jdl")

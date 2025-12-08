@@ -21,17 +21,7 @@ scramv1 b -j 4
 
 
 
-## Alternative Code setup
-
-#cp PhysicsTools/NanoAODTools/python/postprocessing/analysis/nanoAOD_skim/data/btag/*.csv PhysicsTools/NanoAODTools/data/btagSF/.
-scram b -j12
-
-cd $CMSSW_BASE/src/PhysicsTools/NanoAODTools/python/postprocessing/analysis/nanoAOD_skim
-#MELA
-git clone https://github.com/JHUGen/JHUGenMELA.git JHUGenMELA
-(cd JHUGenMELA; git checkout -b from-v242 v2.4.2; ./setup.sh)
-
-
+## Manual Code setup
 
 
 1. Step: 1: Get CMSSW release
@@ -49,6 +39,7 @@ git clone https://github.com/JHUGen/JHUGenMELA.git JHUGenMELA
    git cms-init
 
    git clone git@github.com:cms-nanoAOD/nanoAOD-tools.git PhysicsTools/NanoAODTools
+   git clone git@github.com:cms-cat/nanoAOD-tools-modules.git PhysicsTools/NATModules
    cd PhysicsTools/NanoAODTools
    ```
 
@@ -56,7 +47,7 @@ git clone https://github.com/JHUGen/JHUGenMELA.git JHUGenMELA
 
    ```bash
    cd $CMSSW_BASE/src
-   git clone --branch HZZ_Analysis_Run3 https://github.com/lwang046/HHbbZZ.git PhysicsTools/NanoAODTools/python/postprocessing/analysis/nanoAOD_skim
+   git clone --branch HHbbZZ_Analysis_Run3 https://github.com/lwang046/HHbbZZ.git PhysicsTools/NanoAODTools/python/postprocessing/analysis/nanoAOD_skim
    cd PhysicsTools/NanoAODTools/python/postprocessing/analysis/nanoAOD_skim
    cd -
    cmsenv
@@ -114,7 +105,7 @@ git clone https://github.com/JHUGen/JHUGenMELA.git JHUGenMELA
 1. [condor_setup_lxplus.py](condor_setup_lxplus.py): This script can be used to setup the condor jobs. It takes the input text file (present inside directory [input_data_Files](input_data_Files)) from which you need to take input NanoAOD DAS names. Also, updated the output EOS path. Then do the following:
 
    ```bash
-   python condor_setup_lxplus.py --input-file sample_list_v12_2022.dat
+   python3 condor_setup_lxplus.py --input_file sample_list_v12_2022.dat
    ```
    This will create the condor job files and the condor log files.
 
