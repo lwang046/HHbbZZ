@@ -15,7 +15,7 @@ from PhysicsTools.NATModules.modules.jetCorr import jetJERC as jetJERC_natlib
 from PhysicsTools.NanoAODTools.postprocessing.modules.common.muonScaleResProducer import (
     muonScaleRes2016, muonScaleRes2017, muonScaleRes2018
 )
-
+from btagSFProducer import btagSFProducer
 
 def get_electron_sf_2022(data_tag, isMC):
     """Get electron scale factor corrections for 2022."""
@@ -589,6 +589,11 @@ def get_corrections_modules(year, data_tag, first_file, isMC, overwritePt):
         modules.append(get_electron_scale_res_2022(data_tag, isMC, overwritePt))
         modules.append(get_jet_veto_map_2022(data_tag))
         modules.append(get_jet_correction_2022(data_tag, isMC))
+        # --- Add B-tagging SF ---
+        if isMC:
+            btag_mod = get_btag_sf_module(year, data_tag, isMC)
+            if btag_mod:
+                modules.append(btag_mod)
     
     elif year == 2023:
         modules.append(get_electron_sf_2023(data_tag, isMC))
@@ -597,10 +602,13 @@ def get_corrections_modules(year, data_tag, first_file, isMC, overwritePt):
         modules.append(get_electron_scale_res_2023(data_tag, isMC, overwritePt))
         modules.append(get_jet_veto_map_2023(data_tag))
         modules.append(get_jet_correction_2023(data_tag, isMC))
+        # --- Add B-tagging SF ---
+        if isMC:
+            btag_mod = get_btag_sf_module(year, data_tag, isMC)
+            if btag_mod:
+                modules.append(btag_mod)
     
     elif year == 2024:
-        # Note: 2024 corrections may need to be added for electron/muon SF and scale/res
-        # For now, only jet corrections are implemented
         modules.append(get_jet_veto_map_2024(data_tag))
         modules.append(get_jet_correction_2024(data_tag, isMC))
     
@@ -642,4 +650,47 @@ def get_pu_weight_module(year, data_tag):
         return get_pu_weight_2023(data_tag)
     
     return None
+
+
+def get_btag_sf_module(year, data_tag, isMC):
+    """
+    Get B-tagging Scale Factor producer for Run3 with shape correction.
+    
+    Args:
+        year: Year (2022, 2023)
+        data_tag: Data tag
+        isMC: Whether processing MC
+    
+    Returns:
+        btagSFProducer instance or None
+    """
+    if not isMC:
+        return None
+    
+    json_path = ""
+    
+    if year == 2022:
+        if "pre_EE" in data_tag:
+            json_path = "/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/BTV/2022_Summer22/btagging.json.gz"
+        else:
+            json_path = "/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/BTV/2022_Summer22EE/btagging.json.gz"
+    
+    elif year == 2023:
+        if "pre_BPix" in data_tag:
+            json_path = "/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/BTV/2023_Summer23/btagging.json.gz"
+        else:
+            json_path = "/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/BTV/2023_Summer23BPix/btagging.json.gz"
+    
+    if json_path and os.path.exists(json_path):
+        print(f"INFO: Loading B-tag SF from {json_path}")
+        return btagSFProducer(
+            json_path,
+            algo='deepJet',
+            selectedWPs=['M', 'shape_corr']  # M for event selection, shape_corr for ML
+        )
+    elif json_path:
+        print(f"WARNING: B-tag JSON not found at {json_path}")
+        return None
+    else:
+        return None
 
