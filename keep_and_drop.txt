@@ -52,7 +52,7 @@ keep Muon*
 #
 #
 #    JetMet
-# keep btag*
+keep btag*
 # keep CaloMET*
 # keep ChsMET*
 # keep nCorrT1METJet
