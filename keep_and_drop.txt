@@ -52,7 +52,7 @@ keep Muon*
 #
 #
 #    JetMet
-keep btag*
+# keep btag*
 # keep CaloMET*
 # keep ChsMET*
 # keep nCorrT1METJet
@@ -110,4 +110,11 @@ keep lep*
 keep invjj
 keep goodJet*
 keep Flag_JetVetoed*
-
+keep mass4e
+keep mass4mu
+keep mass2e2mu
+#
+#
+#       kFactors
+keep qqZZ*
+keep ggZZ*

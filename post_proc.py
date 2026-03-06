@@ -27,7 +27,6 @@ def parse_arguments():
     parser.add_argument("--overwritePt", default=True, type=bool, help="overwright muon pt from muon scale and res corrections")
     return parser.parse_args()
 
-
 def getListFromFile(filename):
     """Read file list from a text file."""
     with open(filename, "r") as file:
@@ -166,7 +165,8 @@ def main():
         p=PostProcessor(
             ".",
             testfilelist, 
-            cut = "(Sum$(Muon_pt>3) + Sum$(Electron_pt>5) >= 4) && (nJet>=2)",
+            #cut = "(Sum$(Muon_pt>3) + Sum$(Electron_pt>5) >= 4) && (nJet>=2)",
+            cut = "Sum$(Muon_pt>3) + Sum$(Electron_pt>5) >= 4",
             branchsel = None,
             modules = modulesToRun, 
             provenance = True,
@@ -183,10 +183,22 @@ def main():
             #fatJetCorrector = createJMECorrector(isMC=isMC, dataYear=year, jesUncert="All", jetType = "AK8PFPuppi")
             #modulesToRun.extend([jetmetCorrector(), fatJetCorrector()])
 
-        p=PostProcessor(".",testfilelist, None, None, modules = modulesToRun, provenance=True, fwkJobReport=True,haddFileName="skimmed_nano.root", jsonInput=jsonFileName, maxEntries=entriesToRun, prefetch=DownloadFileToLocalThenRun, outputbranchsel="keep_and_drop_data.txt")
+        p=PostProcessor(
+            ".",
+            testfilelist, 
+            #cut = "(Sum$(Muon_pt>3) + Sum$(Electron_pt>5) >= 4) && (Sum$(Jet_pt>20)>=2)",
+            cut = "Sum$(Muon_pt>3) + Sum$(Electron_pt>5) >= 4",
+            branchsel = None,
+            modules = modulesToRun, 
+            provenance=True, 
+            fwkJobReport=True,
+            haddFileName="skimmed_nano.root", 
+            jsonInput=jsonFileName, maxEntries=entriesToRun, 
+            prefetch=DownloadFileToLocalThenRun, 
+            outputbranchsel="keep_and_drop_data.txt"
+        )
 
     p.run()
-
 
 if __name__ == "__main__":
     main()

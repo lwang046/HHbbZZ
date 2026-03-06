@@ -15,6 +15,7 @@ from PhysicsTools.NATModules.modules.jetCorr import jetJERC as jetJERC_natlib
 from PhysicsTools.NanoAODTools.postprocessing.modules.common.muonScaleResProducer import (
     muonScaleRes2016, muonScaleRes2017, muonScaleRes2018
 )
+from kFactorProducer import create_kfactor_producer
 
 
 def get_electron_sf_2022(data_tag, isMC):
@@ -565,6 +566,24 @@ def get_jet_correction_2024(data_tag, isMC):
         overwritePt, usePhiDependentJEC, useRunDependentJEC
     )
 
+def get_kfactor_module(year, file_path, kfactor_dir="/eos/user/l/liuc/kFactor"):
+    """
+    Get kFactor correction module for ZZ samples.
+    Passes the full file path to kFactorProducer for robust sample identification.
+    """
+    
+    print(f"[corrections_config] Creating kFactorProducer for file: {file_path}")
+
+    path_lower = file_path.lower()
+    is_ggzz = "gluglutocontinto2z" in path_lower
+    is_qqzz = "zzto4l" in path_lower
+    
+    if is_ggzz or is_qqzz:
+        print(f"[corrections_config] Sample requires k-factors (ggZZ: {is_ggzz}, qqZZ: {is_qqzz})")
+        return create_kfactor_producer(year, file_path, kfactor_dir)
+    else:
+        print(f"[corrections_config] Sample does not require k-factors")
+        return None
 
 def get_corrections_modules(year, data_tag, first_file, isMC, overwritePt):
     """
@@ -581,6 +600,12 @@ def get_corrections_modules(year, data_tag, first_file, isMC, overwritePt):
         List of correction modules
     """
     modules = []
+    
+    # Add kFactor for qqZZ and ggZZ MC samples 
+    if isMC:
+        kfactor_module = get_kfactor_module(year, first_file)
+        if kfactor_module is not None:
+            modules.append(kfactor_module)
     
     if year == 2022:
         modules.append(get_electron_sf_2022(data_tag, isMC))

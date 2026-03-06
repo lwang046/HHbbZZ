@@ -15,10 +15,14 @@ class H4LTools {
       H4LTools(int year, bool isMC_);
       float elePtcut, MuPtcut, eleEtacut, MuEtacut, elesip3dCut, Musip3dCut,Zmass,MZ1cut,MZcutup,MZcutdown,MZZcut,HiggscutUp,HiggscutDown;
       float eleLoosedxycut,eleLoosedzcut,MuLoosedxycut,MuLoosedzcut,MuTightdxycut,MuTightdzcut,MuTightTrackerLayercut,MuTightpTErrorcut,MuHighPtBound,eleIsocut,MuIsocut;
-      float fsrphotonPtcut,fsrphotonEtacut,fsrphotonIsocut,fsrphotondRlcut,fsrphotondRlOverPtcut, JetPtcut,JetEtacut,JetNcut;
+      float fsrphotonPtcut,fsrphotonEtacut,fsrphotonIsocut,fsrphotondRlcut,fsrphotondRlOverPtcut,JetPtcut,JetEtacut,JetNcut;
       float btagger1_DJ,btagger1_PN,btagger1_RPT,btagger2_DJ,btagger2_PN,btagger2_RPT,invjj;
       float eleBDTWPLELP,eleBDTWPMELP,eleBDTWPHELP,eleBDTWPLEHP,eleBDTWPMEHP,eleBDTWPHEHP;
       bool RecoFourMuEvent, RecoFourEEvent, RecoTwoETwoMuEvent, RecoTwoMuTwoEEvent;
+
+      int cut4e, cut4mu, cut2e2mu;
+      int cutZZ4e, cutZZ4mu, cutZZ2e2mu, cutm4l4e, cutm4l4mu, cutm4l2e2mu, cutghost2e2mu, cutQCD2e2mu, cutLepPt2e2mu, cutghost4e, cutQCD4e, cutLepPt4e, cutghost4mu, cutQCD4mu, cutLepPt4mu;
+    
       void InitializeElecut(float elePtcut_,float eleEtacut_,float elesip3dCut_,float eleLoosedxycut_,float eleLoosedzcut_,float eleIsocut_,float eleBDTWPLELP_,float eleBDTWPMELP_, float eleBDTWPHELP_,float eleBDTWPLEHP_,float eleBDTWPMEHP_,float eleBDTWPHEHP_){
         elePtcut = elePtcut_;
         eleEtacut = eleEtacut_;
@@ -340,8 +344,8 @@ class H4LTools {
 
         pTj1 = -99;  etaj1 = -99;  phij1 = -99;  mj1 = -99; btagger1_DJ = -99; btagger1_PN = -99; btagger1_RPT = -99;
         pTj2 = -99;  etaj2 = -99;  phij2 = -99;  mj2 = -99; btagger2_DJ = -99; btagger2_PN = -99; btagger2_RPT = -99;
-
-        njets_pt30_eta4p7 = 0; invjj = -99;
+        invjj = -99;
+        njets_pt30_eta4p7 = 0;
         RecoFourMuEvent=false; RecoFourEEvent=false; RecoTwoETwoMuEvent=false; RecoTwoMuTwoEEvent=false;
         flag4e=false; flag4mu=false; flag2e2mu=false;
       }
@@ -356,7 +360,8 @@ class H4LTools {
 
       Mela* mela;
       float me_0plus_JHU, me_qqZZ_MCFM, p0plus_m4l, bkg_m4l;
-      float D_bkg_kin, D_bkg, D_g4, D_g1g4, D_0m, D_CP, D_0hp, D_int, D_L1, D_L1_int, D_L1Zg, D_L1Zgint;
+      float D_bkg_kin, D_bkg, D_g4, D_g1g4, D_CP, D_int, D_L1_int, D_L1Zgint;
+      float D_0m, D_0hp, D_L1, D_L1Zg;
       float D_bkg_kin_vtx_BS;
       float p0minus_VAJHU, Dgg10_VAMCFM, pg1g4_VAJHU;
       float p0plus_VAJHU, p_GG_SIG_ghg2_1_ghz1prime2_1E4_JHUGen, p_GG_SIG_ghg2_1_ghza1prime2_1E4_JHUGen, p_GG_SIG_ghg2_1_ghz1_1_ghza1prime2_1E4_JHUGen, p_GG_SIG_ghg2_1_ghz1_1_ghz1prime2_1E4_JHUGen, p_GG_SIG_ghg2_1_ghz1_1_ghz2_1_JHUGen, pDL1_VAJHU, pD_L1Zgint; //, p0plus_VAJHU;
@@ -365,11 +370,11 @@ class H4LTools {
       float getDL1Constant(float ZZMass);
       float getDL1ZgsConstant(float ZZMass);
 
-      int cut4e, cut4mu, cut2e2mu, cutZZ4e, cutZZ4mu, cutZZ2e2mu, cutm4l4e, cutm4l4mu, cutm4l2e2mu, cutghost2e2mu, cutQCD2e2mu, cutLepPt2e2mu, cutghost4e, cutQCD4e, cutLepPt4e, cutghost4mu, cutQCD4mu, cutLepPt4mu;
-      float pTL1, etaL1, phiL1, massL1, pTL2, etaL2, phiL2, massL2, pTL3, etaL3, phiL3, massL3, pTL4, etaL4, phiL4, massL4;
       float pTj1, etaj1, phij1, mj1, pTj2, etaj2, phij2, mj2;
-
-      
+      float pTL1, etaL1, phiL1, massL1;
+      float pTL2, etaL2, phiL2, massL2;
+      float pTL3, etaL3, phiL3, massL3;
+      float pTL4, etaL4, phiL4, massL4;
       
     private:
       std::vector<float> Electron_pt,Electron_phi,Electron_eta,Electron_mass,Electron_dxy,Electron_dz,Electron_sip3d;
@@ -391,9 +396,7 @@ class H4LTools {
       
       std::vector<float> GenPart_pt;
       
-      
       unsigned nElectron,nMuon,nJet,nGenPart,nFsrPhoton,nGenJet;
-
 
 
 };

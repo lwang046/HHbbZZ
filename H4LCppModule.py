@@ -90,7 +90,7 @@ class HZZAnalysisCppProducer(Module):
             print(("PassGEN2e2mufidCut: "+str(self.genworker.nGEN2e2mupassFid)+" Events"))
             print(("PassGEN4muCut: "+str(self.genworker.nGEN4mu)+" Events"))
             print(("PassGEN4muZ1Cut: "+str(self.genworker.nGEN4mupassZ1)+" Events"))
-            print(("PassGEN4mufidCut: "+str(self.genworker.nGEN4mupassFid)+" Events"))
+            print(("PassGEN4mufidCut: "+str(self.genworker.nGEN4mupassFid)+" Events"))            
         pass
 
     def beginFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
@@ -229,6 +229,14 @@ class HZZAnalysisCppProducer(Module):
         isMC = self.isMC
         self.worker.SetObjectNum(event.nElectron,event.nMuon,event.nJet,event.nFsrPhoton)
         if isMC:
+            
+            #----------DY 0to40---------
+            #lhe_vpt = getattr(event, 'LHE_Vpt', 9999.0)
+            #if lhe_vpt > 40.0:
+            #    return False
+            #self.genworker.SetEventWeights(lhe_vpt)
+            #----------DY 0to40---------
+            
             self.worker.SetObjectNumGen(event.nGenPart)
             self.genworker.Initialize()
             self.genworker.SetObjectNumGen(event.nGenPart, event.nGenJet)
@@ -561,7 +569,11 @@ class HZZAnalysisCppProducer(Module):
             phi4l = self.worker.ZZsystemnofsr.Phi()
             mass4l = self.worker.ZZsystemnofsr.M()
             rapidity4l = self.worker.ZZsystemnofsr.Rapidity()
-        Weight = event.genWeight * dataMCWeight_new * prefiringWeight 
+        if self.isMC:
+            Weight = event.genWeight * dataMCWeight_new * prefiringWeight
+        else:
+            Weight = 1.0
+            
         self.out.fillBranch("mass4l",mass4l)
         self.out.fillBranch("GENmass4l",GENmass4l)
         self.out.fillBranch("mass4e",mass4e)

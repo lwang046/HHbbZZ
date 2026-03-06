@@ -602,9 +602,7 @@ bool H4LTools::findZCandidate(){
         cut2e2mu++;
         flag2e2mu = true;
     }
-    else {
-        return false;
-    }
+    //Just record 3 cases, but do not cut anything here.
     
     if(TightEleindex.size()>1){
         for(unsigned int ke=0; ke<(TightEleindex.size()-1);ke++){
@@ -638,9 +636,6 @@ bool H4LTools::findZCandidate(){
                         Zlep1chg.push_back(Elechg[TightEleindex[ke]]);
                         Zlep2chg.push_back(Elechg[TightEleindex[je]]);
                     }
-                }
-                else{
-                    continue;
                 }
             }
         }
@@ -679,9 +674,6 @@ bool H4LTools::findZCandidate(){
                         Zlep2chg.push_back(Muchg[TightMuindex[jmu]]);
                     }
                 }
-                else{
-                    continue;
-                }
             }
         }
     }
@@ -706,24 +698,19 @@ bool H4LTools::ZZSelection(){
 
     bool foundZZCandidate = false;
     if(!findZCandidate()){
-        // std::cout << "[DEBUG] findZCandidate=" << findZCandidate() << " foundZZCandidate=" << foundZZCandidate << std::endl;
         return foundZZCandidate;
     }
     if((nTightMu+nTightEle)<4){
-        // std::cout << "[DEBUG] nTightMu+nTightEle=" << (nTightMu+nTightEle) << " foundZZCandidate=" << foundZZCandidate << std::endl;
         return foundZZCandidate;
     } 
     
     if((abs(nTightEleChgSum)+abs(nTightMuChgSum))>(nTightMu+nTightEle-4)){
-        // std::cout << "[DEBUG] abs(nTightEleChgSum)+abs(nTightMuChgSum)=" << (abs(nTightEleChgSum)+abs(nTightMuChgSum)) << " foundZZCandidate=" << foundZZCandidate << std::endl;
         return foundZZCandidate;
     }
     if(Zsize<2){
-        // std::cout << "[DEBUG] Zsize=" << Zsize << " foundZZCandidate=" << foundZZCandidate << std::endl;
         return foundZZCandidate;
     }
     if(jetidx.size()<JetNcut){
-        // std::cout << "[DEBUG] jetidx.size()=" << jetidx.size() << " foundZZCandidate=" << foundZZCandidate << std::endl;
         return foundZZCandidate;
     }
     //Find ZZ candidate
@@ -773,7 +760,7 @@ bool H4LTools::ZZSelection(){
             if ((Zlep2chg[m]+Zlep2chg[n])==0){
                 TLorentzVector lepA,lepB,lepAB;
                 lepA.SetPtEtaPhiM(Zlep2ptNoFsr[m],Zlep2etaNoFsr[m],Zlep2phiNoFsr[m],Zlep2massNoFsr[m]);
-                lepB.SetPtEtaPhiM(Zlep1ptNoFsr[n],Zlep1etaNoFsr[n],Zlep1phiNoFsr[n],Zlep1massNoFsr[n]);
+               lepB.SetPtEtaPhiM(Zlep1ptNoFsr[n],Zlep1etaNoFsr[n],Zlep1phiNoFsr[n],Zlep1massNoFsr[n]);
                 lepAB = lepA + lepB;
                 if(lepAB.M()<4) continue;
             }
@@ -836,26 +823,50 @@ bool H4LTools::ZZSelection(){
         }
     }
     if(ghosttag){
-        if (flag2e2mu) cutghost2e2mu++;
-        if (flag4e) cutghost4e++;
-        if (flag4mu) cutghost4mu++;
+        if (flag2e2mu) {
+            cutghost2e2mu++;
+        }
+        if (flag4e){
+            cutghost4e++;
+        }
+        if (flag4mu) {
+            cutghost4mu++;
+        }
     }
     if(lepPtTag){
-        if (flag2e2mu) cutLepPt2e2mu++;
-        if (flag4e) cutLepPt4e++;
-        if (flag4mu) cutLepPt4mu++;
+        if (flag2e2mu) {
+            cutLepPt2e2mu++;
+        }
+        if (flag4e) {
+            cutLepPt4e++;
+        }
+        if (flag4mu) {
+            cutLepPt4mu++;
+        }
     }
     if(QCDtag){
-        if (flag2e2mu) cutQCD2e2mu++;
-        if (flag4e) cutQCD4e++;
-        if (flag4mu) cutQCD4mu++;
+        if (flag2e2mu) {
+            cutQCD2e2mu++;
+        }
+        if (flag4e) {
+            cutQCD4e++;
+        }
+        if (flag4mu) {
+            cutQCD4mu++;
+        }
     }
     if(foundZZCandidate == false){
         return foundZZCandidate;
     }
-    if (flag2e2mu) cutZZ2e2mu++;
-    if (flag4e) cutZZ4e++;
-    if (flag4mu) cutZZ4mu++;
+    if (flag2e2mu) {
+        cutZZ2e2mu++;
+    }
+    if (flag4e) {
+        cutZZ4e++;
+    }
+    if (flag4mu) {
+        cutZZ4mu++;
+    }
     int Z1index,Z2index; 
     Z1index = Z1CanIndex[0];
     Z2index = Z2CanIndex[0];
@@ -877,7 +888,6 @@ bool H4LTools::ZZSelection(){
             }
         }
     }
-       
     
     Z1 = Zlist[Z1index];
     Z2 = Zlist[Z2index];
@@ -934,20 +944,9 @@ bool H4LTools::ZZSelection(){
             }
         }
     }
-    //std::cout << "jetidx: ";
-    //for (auto idx : jetidx) {
-    //    std::cout << idx << "(btag=" << Jet_btagRobustParTAK4B[idx] << ") ";
-    //}
-    //std::cout << std::endl;
-
-    //std::cout << "Selected jet1index: " << jet1index 
-    //      << " (btag=" << Jet_btagRobustParTAK4B[jet1index] << "), "
-    //      << "jet2index: " << jet2index
-    //      << " (btag=" << Jet_btagRobustParTAK4B[jet2index] << ")" 
-    //      << std::endl;
 
     TLorentzVector Jet1,Jet2;
-    SimpleParticleCollection_t associated;
+    SimpleParticleCollection_t associated;//Keep this line when removing the requirement for 2jets
     if(jetidx.size()>1){
         Jet1.SetPtEtaPhiM(Jet_pt[jet1index],Jet_eta[jet1index],Jet_phi[jet1index],Jet_mass[jet1index]);
         associated.push_back(SimpleParticle_t(0, Jet1));
@@ -1012,7 +1011,8 @@ bool H4LTools::ZZSelection(){
     me_0plus_JHU=999.0; me_qqZZ_MCFM=999.0; p0plus_m4l=999.0; bkg_m4l=999.0; D_bkg_kin=999.0; D_bkg=999.0;
     D_bkg_kin_vtx_BS=999.0;
     
-    p0minus_VAJHU=999.0; pg1g4_VAJHU=999.0; Dgg10_VAMCFM=999.0; D_g4=999.0; D_g1g4=999.0; D_0m=999.0; D_CP=999.0; D_0hp=999; D_int=999.0;D_L1=999.0; D_L1_int=999.0; D_L1Zg=999.0; D_L1Zgint=999.0;
+    p0minus_VAJHU=999.0; pg1g4_VAJHU=999.0; Dgg10_VAMCFM=999.0; D_g4=999.0; D_g1g4=999.0; D_CP=999.0; D_int=999.0; D_L1_int=999.0; D_L1Zgint=999.0;
+    D_0m=999.0; D_0hp=999.0; D_L1=999.0; D_L1Zg=999.0;
     p0plus_VAJHU=9999.0; p_GG_SIG_ghg2_1_ghz1prime2_1E4_JHUGen=999.0; pDL1_VAJHU=999.0; pD_L1Zgint=999.0; p_GG_SIG_ghg2_1_ghza1prime2_1E4_JHUGen=999.0; p_GG_SIG_ghg2_1_ghz1_1_ghza1prime2_1E4_JHUGen=999.0, p_GG_SIG_ghg2_1_ghz1_1_ghz1prime2_1E4_JHUGen=999.0, p_GG_SIG_ghg2_1_ghz1_1_ghz2_1_JHUGen=999.0, p0plus_VAJHU=999.0; 
     
     mela->setInputEvent(&daughters, &associated, 0, 0);
