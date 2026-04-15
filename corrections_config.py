@@ -374,10 +374,10 @@ def get_jet_correction_2022(data_tag, isMC):
         # Data - JER are not applied to data
         if "pre_EE" in data_tag:
             folderKey = "Run3-22CDSep23-Summer22-NanoAODv12/latest"
-            L1Key = "Summer22_22Sep2023_RunCD_V3_DATA_L1FastJet_AK4PFPuppi"
-            L2Key = "Summer22_22Sep2023_RunCD_V3_DATA_L2Relative_AK4PFPuppi"
-            L3Key = "Summer22_22Sep2023_RunCD_V3_DATA_L3Absolute_AK4PFPuppi"
-            L2L3Key = "Summer22_22Sep2023_RunCD_V3_DATA_L2L3Residual_AK4PFPuppi"
+            L1Key = "Summer22_22Sep2023_V3_DATA_L1FastJet_AK4PFPuppi"
+            L2Key = "Summer22_22Sep2023_V3_DATA_L2Relative_AK4PFPuppi"
+            L3Key = "Summer22_22Sep2023_V3_DATA_L3Absolute_AK4PFPuppi"
+            L2L3Key = "Summer22_22Sep2023_V3_DATA_L2L3Residual_AK4PFPuppi"
             scaleTotalKey = None
             scaleKeyRegrouped11 = None
             smearKey = None
@@ -386,10 +386,10 @@ def get_jet_correction_2022(data_tag, isMC):
         else:
             # For post_EE, would need to handle different runs (E, F, G) - using E as default
             folderKey = "Run3-22EFGSep23-Summer22EE-NanoAODv12/latest"
-            L1Key = "Summer22EE_22Sep2023_RunE_V3_DATA_L1FastJet_AK4PFPuppi"
-            L2Key = "Summer22EE_22Sep2023_RunE_V3_DATA_L2Relative_AK4PFPuppi"
-            L3Key = "Summer22EE_22Sep2023_RunE_V3_DATA_L3Absolute_AK4PFPuppi"
-            L2L3Key = "Summer22EE_22Sep2023_RunE_V3_DATA_L2L3Residual_AK4PFPuppi"
+            L1Key = "Summer22EE_22Sep2023_V3_DATA_L1FastJet_AK4PFPuppi"
+            L2Key = "Summer22EE_22Sep2023_V3_DATA_L2Relative_AK4PFPuppi"
+            L3Key = "Summer22EE_22Sep2023_V3_DATA_L3Absolute_AK4PFPuppi"
+            L2L3Key = "Summer22EE_22Sep2023_V3_DATA_L2L3Residual_AK4PFPuppi"
             scaleTotalKey = None
             scaleKeyRegrouped11 = None
             smearKey = None
@@ -464,10 +464,10 @@ def get_jet_correction_2023(data_tag, isMC):
         # Data - JER are not applied to data
         if "pre_BPix" in data_tag:
             folderKey = "Run3-23CSep23-Summer23-NanoAODv12/latest"
-            L1Key = "Summer23Prompt23_V2_DATA_L1FastJet_AK4PFPuppi"
-            L2Key = "Summer23Prompt23_V2_DATA_L2Relative_AK4PFPuppi"
-            L3Key = "Summer23Prompt23_V2_DATA_L3Absolute_AK4PFPuppi"
-            L2L3Key = "Summer23Prompt23_V2_DATA_L2L3Residual_AK4PFPuppi"
+            L1Key = "Summer23Prompt23_V3_DATA_L1FastJet_AK4PFPuppi"
+            L2Key = "Summer23Prompt23_V3_DATA_L2Relative_AK4PFPuppi"
+            L3Key = "Summer23Prompt23_V3_DATA_L3Absolute_AK4PFPuppi"
+            L2L3Key = "Summer23Prompt23_V3_DATA_L2L3Residual_AK4PFPuppi"
             scaleTotalKey = None
             scaleKeyRegrouped11 = None
             smearKey = None

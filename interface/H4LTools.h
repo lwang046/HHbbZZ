@@ -21,8 +21,36 @@ class H4LTools {
       bool RecoFourMuEvent, RecoFourEEvent, RecoTwoETwoMuEvent, RecoTwoMuTwoEEvent;
 
       int cut4e, cut4mu, cut2e2mu;
-      int cutZZ4e, cutZZ4mu, cutZZ2e2mu, cutm4l4e, cutm4l4mu, cutm4l2e2mu, cutghost2e2mu, cutQCD2e2mu, cutLepPt2e2mu, cutghost4e, cutQCD4e, cutLepPt4e, cutghost4mu, cutQCD4mu, cutLepPt4mu;
+      int cutZZ4e, cutZZ4mu, cutZZ2e2mu, cutm4l4e, cutm4l4mu, cutm4l2e2mu, cutghost2e2mu, cutQCD2e2mu, cutLepPt2e2mu, cutghost4e, cutQCD4e, cutLepPt4e, cutghost4mu, cutQCD4mu, cutLepPt4mu; //2l2j
     
+      // 2l2j cutflow counters
+      int passTwoTightLeps;
+      int passZCand;
+      int passAtLeastTwoRawJets;
+      int passAtLeastTwoPtEtaJets;
+      int passAtLeastTwoJetIdJets;
+      int passAtLeastTwoPuIdJets;
+      int passTwoGoodJets;
+      int passDijet;
+      int passFinal;
+
+      // event-level jet multiplicities for cumulative jet cutflow
+      int nRawJetsThisEvent;
+      int nPtEtaJetsThisEvent;
+      int nJetIdJetsThisEvent;
+      int nPuIdJetsThisEvent;
+
+      // event-level 2l2j cutflow flags
+      bool eventPassTwoTightLeps;
+      bool eventPassZCand;
+      bool eventPassAtLeastTwoRawJets;
+      bool eventPassAtLeastTwoPtEtaJets;
+      bool eventPassAtLeastTwoJetIdJets;
+      bool eventPassAtLeastTwoPuIdJets;
+      bool eventPassTwoGoodJets;
+      bool eventPassDijet;
+      bool eventPassFinal;
+
       void InitializeElecut(float elePtcut_,float eleEtacut_,float elesip3dCut_,float eleLoosedxycut_,float eleLoosedzcut_,float eleIsocut_,float eleBDTWPLELP_,float eleBDTWPMELP_, float eleBDTWPHELP_,float eleBDTWPLEHP_,float eleBDTWPMEHP_,float eleBDTWPHEHP_){
         elePtcut = elePtcut_;
         eleEtacut = eleEtacut_;
@@ -178,8 +206,7 @@ class H4LTools {
         FsrPhoton_phi = FsrPhoton_phi_;
         FsrPhoton_eta = FsrPhoton_eta_;
         FsrPhoton_pt = FsrPhoton_pt_;
-        FsrPhoton_relIso03 = FsrPhoton_relIso03_;
-        
+        FsrPhoton_relIso03 = FsrPhoton_relIso03_; 
       }*/
       void SetGenParts(float GenPart_pt_){
         GenPart_pt.push_back(GenPart_pt_);
@@ -197,6 +224,10 @@ class H4LTools {
         nGenPart = nGenPart_;
       }
       bool isMC;
+      std::string analysisMode;
+      void SetAnalysisMode(const std::string& mode);
+      bool BuildZZCandidate();
+      bool BuildBestDijet();
       std::vector<unsigned int> goodLooseElectrons2012();
       std::vector<unsigned int> goodLooseMuons2012();
       std::vector<unsigned int> goodMuons2015_noIso_noPf(std::vector<unsigned int> Muonindex);
@@ -281,7 +312,7 @@ class H4LTools {
       TLorentzVector Z2nofsr;
       TLorentzVector ZZsystem;
       TLorentzVector ZZsystemnofsr;
-      
+
       std::vector<int> TightEleindex;
       std::vector<int> TightMuindex;
       void Initialize(){
@@ -307,7 +338,7 @@ class H4LTools {
         Muon_isTracker.clear();Muon_isGlobal.clear();Muon_isPFcand.clear();
         Muon_looseId.clear();Muon_mediumId.clear();Muon_tightId.clear();Muon_mvaLowPtId.clear();Muon_mvaId.clear();Muon_mvaLowPt.clear();
         Jet_pt.clear();Jet_phi.clear();Jet_eta.clear();Jet_mass.clear();Jet_btagDeepC.clear();Jet_btagDeepFlavB.clear();Jet_btagPNetB.clear();Jet_btagRobustParTAK4B.clear();
-        Jet_jetId.clear();Jet_puId.clear(); Zlep1lepindex.clear();Zlep2lepindex.clear();
+        Jet_jetId.clear();Jet_puId.clear(); Zlep1lepindex.clear();Zlep2lepindex.clear(); 
         FsrPhoton_dROverEt2.clear();FsrPhoton_phi.clear();FsrPhoton_eta.clear();FsrPhoton_pt.clear();FsrPhoton_relIso03.clear(); FsrPhoton_electronIdx.clear(); FsrPhoton_muonIdx.clear();
         GenPart_pt.clear();
         Zlist.clear();
@@ -337,6 +368,11 @@ class H4LTools {
         nTightEle = 0; nTightMu = 0; nTightEleChgSum = 0; nTightMuChgSum = 0;
         Lepointer = 0; 
         
+        nRawJetsThisEvent = 0;
+        nPtEtaJetsThisEvent = 0;
+        nJetIdJetsThisEvent = 0;
+        nPuIdJetsThisEvent = 0;
+
         pTL1 = -999; etaL1 = -999; phiL1 = -999; massL1 = -999;
         pTL2 = -999; etaL2 = -999; phiL2 = -999; massL2 = -999;
         pTL3 = -999; etaL3 = -999; phiL3 = -999; massL3 = -999;
@@ -348,6 +384,17 @@ class H4LTools {
         njets_pt30_eta4p7 = 0;
         RecoFourMuEvent=false; RecoFourEEvent=false; RecoTwoETwoMuEvent=false; RecoTwoMuTwoEEvent=false;
         flag4e=false; flag4mu=false; flag2e2mu=false;
+
+        eventPassTwoTightLeps = false;
+        eventPassZCand = false;
+        eventPassAtLeastTwoRawJets = false;
+        eventPassAtLeastTwoPtEtaJets = false;
+        eventPassAtLeastTwoJetIdJets = false;
+        eventPassAtLeastTwoPuIdJets = false;
+        eventPassTwoGoodJets = false;
+        eventPassDijet = false;
+        eventPassFinal = false;
+
       }
       bool isFSR=true;
       unsigned int Zsize=0;
@@ -368,13 +415,15 @@ class H4LTools {
       float getDg4Constant(float ZZMass);
       float getDg2Constant(float ZZMass);
       float getDL1Constant(float ZZMass);
-      float getDL1ZgsConstant(float ZZMass);
+      float getDL1ZgsConstant(float ZZMass); 
 
       float pTj1, etaj1, phij1, mj1, pTj2, etaj2, phij2, mj2;
       float pTL1, etaL1, phiL1, massL1;
       float pTL2, etaL2, phiL2, massL2;
       float pTL3, etaL3, phiL3, massL3;
       float pTL4, etaL4, phiL4, massL4;
+
+
       
     private:
       std::vector<float> Electron_pt,Electron_phi,Electron_eta,Electron_mass,Electron_dxy,Electron_dz,Electron_sip3d;
@@ -392,8 +441,8 @@ class H4LTools {
       std::vector<bool> Muon_looseId,Muon_mediumId,Muon_tightId;
       std::vector<unsigned char> Muon_mvaLowPtId,Muon_mvaId,Muon_mvaLowPt;
 
-      std::vector<float> FsrPhoton_dROverEt2,FsrPhoton_phi,FsrPhoton_pt,FsrPhoton_relIso03,FsrPhoton_eta,FsrPhoton_muonIdx,FsrPhoton_electronIdx;
-      
+      std::vector<float> FsrPhoton_dROverEt2, FsrPhoton_phi, FsrPhoton_pt, FsrPhoton_relIso03, FsrPhoton_eta, FsrPhoton_muonIdx, FsrPhoton_electronIdx;
+
       std::vector<float> GenPart_pt;
       
       unsigned nElectron,nMuon,nJet,nGenPart,nFsrPhoton,nGenJet;
@@ -442,7 +491,21 @@ H4LTools::H4LTools(int year, bool isMC_){
   cutm4l4e = 0;
   cutm4l4mu = 0;
 
+  passTwoTightLeps = 0;
+  passZCand = 0;
+  passTwoGoodJets = 0;
+  passDijet = 0;
+  passFinal = 0;
+
+  passAtLeastTwoRawJets = 0;
+  passAtLeastTwoPtEtaJets = 0;
+  passAtLeastTwoJetIdJets = 0;
+  passAtLeastTwoPuIdJets = 0;
   
+  nRawJetsThisEvent = 0;
+  nPtEtaJetsThisEvent = 0;
+  nJetIdJetsThisEvent = 0;
+  nPuIdJetsThisEvent = 0;
 }
 #endif
 
