@@ -402,13 +402,12 @@ def get_jet_correction_2022(data_tag, isMC):
     # Configuration flags
     overwritePt = True
     usePhiDependentJEC = False  # False for 2022
-    useRunDependentJEC = False  # False for 2022
+    useRunDependentJEC = (not isMC)  # True for data, False for MC
     useJesSplittingScheme11 = False
     scaleKey = scaleKeyRegrouped11 if useJesSplittingScheme11 else scaleTotalKey
     
-    # Call jetJERC following reference pattern (positional arguments)
     return jetJERC_natlib(
-        json_JERC, json_JERsmear, L1Key, L2Key, L3Key, L2L3Key,
+        2022, json_JERC, json_JERsmear, L1Key, L2Key, L3Key, L2L3Key,
         scaleKey, smearKey, JERKey, JERsfKey,
         overwritePt, usePhiDependentJEC, useRunDependentJEC
     )
@@ -497,7 +496,7 @@ def get_jet_correction_2023(data_tag, isMC):
     
     # Call jetJERC following reference pattern (positional arguments)
     return jetJERC_natlib(
-        json_JERC, json_JERsmear, L1Key, L2Key, L3Key, L2L3Key,
+        2023, json_JERC, json_JERsmear, L1Key, L2Key, L3Key, L2L3Key,
         scaleKey, smearKey, JERKey, JERsfKey,
         overwritePt, usePhiDependentJEC, useRunDependentJEC
     )
@@ -561,7 +560,7 @@ def get_jet_correction_2024(data_tag, isMC):
     
     # Call jetJERC following reference pattern (positional arguments)
     return jetJERC_natlib(
-        json_JERC, json_JERsmear, L1Key, L2Key, L3Key, L2L3Key,
+        2024, json_JERC, json_JERsmear, L1Key, L2Key, L3Key, L2L3Key,
         scaleKey, smearKey, JERKey, JERsfKey,
         overwritePt, usePhiDependentJEC, useRunDependentJEC
     )
