@@ -55,9 +55,6 @@ class kFactorProducer(Module):
         else:
             print(f"[kFactorProducer] Sample does not require k-factors, skipping file loading")
         
-        # Debug counter for first few events
-        self.debug_count = 0
-        
         print(f"[kFactorProducer] Initialization complete\n")
     
     def _setup_library_paths(self):
@@ -419,9 +416,11 @@ class kFactorProducer(Module):
                     xmin = spline.GetXmin()
                     xmax = spline.GetXmax()
                     m = max(min(mass, xmax), xmin)
-                    result[key] = spline.Eval(m)
-                except:
-                    pass
+                    kf_value = spline.Eval(m)
+                    result[key] = kf_value
+
+                except Exception as e:
+                    print(f"  Error evaluating NNLO spline for {var}: {e}")
         
         # NLO nominal
         result["NLO_Nominal"] = 1.0
@@ -563,11 +562,6 @@ class kFactorProducer(Module):
             kf = self._compute_ggzz_kfactor(gen_mass)
             for name, value in kf.items():
                 self.out.fillBranch(f"ggZZ_kf_{name}", value)
-            
-            # Print total K-factor for first few events
-            if self.debug_count < 5:
-                print(f"[kFactor] ggZZ: m4l={gen_mass:.1f} GeV, total={kf['NNLO_Nominal']:.4f}")
-                self.debug_count += 1
         
         elif self.is_qqzz:
             kf = self._compute_qqzz_kfactor(
@@ -582,10 +576,6 @@ class kFactorProducer(Module):
             self.out.fillBranch("qqZZ_kf_QCD_NLO_Pt", kf["QCD_NLO_Pt"])
             self.out.fillBranch("qqZZ_kf_total", kf["total"])
             
-            # Print total K-factor for first few events
-            if self.debug_count < 5:
-                print(f"[kFactor] qqZZ: m4l={gen_mass:.1f} GeV, total={kf['total']:.4f}")
-                self.debug_count += 1
         
         return True
     

@@ -391,6 +391,9 @@ class HZZAnalysisCppProducer(Module):
             self.passtrigEvts += 1
         else:
             return keepIt
+        
+        if self.analysisMode == "2l2j":
+            keepIt = True
 
         electrons = Collection(event, "Electron")
         muons = Collection(event, "Muon")
@@ -469,9 +472,8 @@ class HZZAnalysisCppProducer(Module):
         self.worker.BatchFsrRecovery_Run3()
         self.worker.LeptonSelection()
 
-        if ((self.worker.nTightEle < 2) and (self.worker.nTightMu < 2)):
-            return keepIt
-
+        hasTwoTightLeps = ((self.worker.nTightEle >= 2) or (self.worker.nTightMu >= 2))
+        
         if isMC:
             self.genworker.SetGenVariables()
             GENmass4l = self.genworker.GENmass4l
@@ -584,7 +586,9 @@ class HZZAnalysisCppProducer(Module):
                 for i in range(len(GENjet_Hindex_vec)):
                     GENjet_Hindex.append(GENjet_Hindex_vec[i])
 
-        foundZZCandidate = self.worker.ZZSelection()
+        foundZZCandidate = False
+        if hasTwoTightLeps:
+            foundZZCandidate = self.worker.ZZSelection()
         
         eventPassTwoTightLeps = bool(self.worker.eventPassTwoTightLeps)
         eventPassZCand = bool(self.worker.eventPassZCand)

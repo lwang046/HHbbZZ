@@ -64,8 +64,8 @@ keep btag*
 # keep IsoTrack*
 keep nJet
 keep Jet*
-
-
+#
+#
 # keep GenMET*
 # keep MET*
 keep Pileup*
@@ -108,7 +108,7 @@ keep njet*
 keep D_*
 keep lep*
 keep invjj
-keep goodJet*
+#keep goodJet*
 keep Flag_JetVetoed*
 keep mass4e
 keep mass4mu
@@ -118,3 +118,7 @@ keep mass2e2mu
 #       kFactors
 keep qqZZ*
 keep ggZZ*
+#
+#
+#    check 2l2j
+keep eventPass*
