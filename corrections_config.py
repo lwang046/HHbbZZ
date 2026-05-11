@@ -187,7 +187,7 @@ def get_electron_scale_res_2018(isMC, overwritePt):
     json_path = "/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/EGM/2018_UL/electronSS.json.gz"
     scaleKey = "EGMScale_Compound_Ele_2018"
     smearKey = "EGMSmearAndSyst_Ele_2018"
-    return eleScaleRes_natlib(json_path, scaleKey, smearKey, isMC, overwritePt)
+    return eleScaleRes_natlib(json_path, scaleKey, smearKey, overwritePt)
 
 
 def get_electron_sf_2017(isMC):
@@ -219,7 +219,7 @@ def get_electron_scale_res_2017(isMC, overwritePt):
     json_path = "/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/EGM/2017_UL/electronSS.json.gz"
     scaleKey = "EGMScale_Compound_Ele_2017"
     smearKey = "EGMSmearAndSyst_Ele_2017"
-    return eleScaleRes_natlib(json_path, scaleKey, smearKey, isMC, overwritePt)
+    return eleScaleRes_natlib(json_path, scaleKey, smearKey, overwritePt)
 
 
 def get_electron_sf_2016(first_file, isMC):
@@ -265,7 +265,7 @@ def get_electron_scale_res_2016(first_file, isMC, overwritePt):
         scaleKey = "EGMScale_Compound_Ele_2016postVFP"
         smearKey = "EGMSmearAndSyst_Ele_2016postVFP"
     
-    return eleScaleRes_natlib(json_path, scaleKey, smearKey, isMC, overwritePt)
+    return eleScaleRes_natlib(json_path, scaleKey, smearKey, overwritePt)
 
 
 def get_pu_weight_2022(data_tag):

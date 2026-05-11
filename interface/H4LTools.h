@@ -100,8 +100,7 @@ class H4LTools {
         MZcutup = MZcutup_;
       }
       void SetElectrons(float Electron_pt_, float Electron_eta_, float Electron_phi_, float Electron_mass_, float Electron_dxy_, float Electron_dz_, float Electron_sip3d_, 
-                        bool Electron_mvaFall17V2Iso_WP80_, bool Electron_mvaFall17V2Iso_WP90_, bool Electron_mvaFall17V2Iso_WPL_,
-                        bool Electron_mvaIso_WP80_, bool Electron_mvaIso_WP90_, int Electron_pdgId_, float Electron_pfRelIso03_all_){
+                        float Electron_deltaEtaSC_, float Electron_mvaHZZIso_, bool Electron_mvaIso_WPHZZ_, int Electron_pdgId_, float Electron_pfRelIso03_all_){
         Electron_pt.push_back(Electron_pt_); 
         Electron_phi.push_back(Electron_phi_);
         Electron_eta.push_back(Electron_eta_);
@@ -109,11 +108,9 @@ class H4LTools {
         Electron_dxy.push_back(Electron_dxy_);
         Electron_dz.push_back(Electron_dz_);
         Electron_sip3d.push_back(Electron_sip3d_);
-        Electron_mvaFall17V2Iso_WP80.push_back(Electron_mvaFall17V2Iso_WP80_);
-        Electron_mvaFall17V2Iso_WP90.push_back(Electron_mvaFall17V2Iso_WP90_);
-        Electron_mvaFall17V2Iso_WPL.push_back(Electron_mvaFall17V2Iso_WPL_);
-        Electron_mvaIso_WP80.push_back(Electron_mvaIso_WP80_);
-        Electron_mvaIso_WP90.push_back(Electron_mvaIso_WP90_);
+        Electron_deltaEtaSC.push_back(Electron_deltaEtaSC_);
+        Electron_mvaHZZIso.push_back(Electron_mvaHZZIso_);
+        Electron_mvaIso_WPHZZ.push_back(Electron_mvaIso_WPHZZ_);
         Electron_pdgId.push_back(Electron_pdgId_);
         Electron_pfRelIso03_all.push_back(Electron_pfRelIso03_all_);
       }
@@ -226,13 +223,14 @@ class H4LTools {
       bool isMC;
       std::string analysisMode;
       void SetAnalysisMode(const std::string& mode);
+      void SetNanoVersion(int v){ nanoVersion = v; }
       bool BuildZZCandidate();
       bool BuildBestDijet();
       std::vector<unsigned int> goodLooseElectrons2012();
       std::vector<unsigned int> goodLooseMuons2012();
       std::vector<unsigned int> goodMuons2015_noIso_noPf(std::vector<unsigned int> Muonindex);
       std::vector<unsigned int> goodElectrons2015_noIso_noBdt(std::vector<unsigned int> Electronindex);
-      std::vector<bool> pass_Ele_Id(const std::string& era, const std::string& wp);
+      std::vector<bool> pass_Ele_Id(int nanoVersion);
       std::vector<bool> pass_Mu_Id(const std::string& era, const std::string& method, const std::string& wp);
       std::vector<unsigned int> goodFsrPhotons();
       unsigned doFsrRecovery(TLorentzVector Lep);
@@ -331,8 +329,8 @@ class H4LTools {
         ElelistFsr.clear();
         MulistFsr.clear();
         Electron_pt.clear();Electron_phi.clear();Electron_eta.clear();Electron_mass.clear();Electron_dxy.clear();Electron_dz.clear();Electron_sip3d.clear();
-        Electron_mvaFall17V2Iso_WP80.clear();Electron_mvaFall17V2Iso_WP90.clear();Electron_mvaFall17V2Iso_WPL.clear();
-        Electron_mvaIso_WP80.clear();Electron_mvaIso_WP90.clear();Electron_pdgId.clear();Electron_genPartIdx.clear();Electron_pfRelIso03_all.clear();
+        Electron_deltaEtaSC.clear();Electron_mvaHZZIso.clear();Electron_mvaIso_WPHZZ.clear();
+        Electron_pdgId.clear();Electron_genPartIdx.clear();Electron_pfRelIso03_all.clear();
         Muon_pt.clear();Muon_phi.clear();Muon_eta.clear();Muon_mass.clear();Muon_dxy.clear();Muon_dz.clear();Muon_sip3d.clear();Muon_ptErr.clear();Muon_pfRelIso03_all.clear();
         Muon_nTrackerLayers.clear();Muon_genPartIdx.clear();Muon_pdgId.clear();Muon_charge.clear();
         Muon_isTracker.clear();Muon_isGlobal.clear();Muon_isPFcand.clear();
@@ -428,8 +426,8 @@ class H4LTools {
     private:
       std::vector<float> Electron_pt,Electron_phi,Electron_eta,Electron_mass,Electron_dxy,Electron_dz,Electron_sip3d;
       std::vector<float> Electron_pfRelIso03_all;
-      std::vector<bool> Electron_mvaFall17V2Iso_WP80,Electron_mvaFall17V2Iso_WP90,Electron_mvaFall17V2Iso_WPL;
-      std::vector<bool> Electron_mvaIso_WP80,Electron_mvaIso_WP90;
+      std::vector<float> Electron_deltaEtaSC,Electron_mvaHZZIso;
+      std::vector<bool> Electron_mvaIso_WPHZZ;
       std::vector<int> Electron_pdgId,Electron_genPartIdx;
 
       std::vector<float> Jet_pt,Jet_phi,Jet_eta,Jet_mass,Jet_btagDeepC,Jet_btagDeepFlavB,Jet_btagPNetB,Jet_btagRobustParTAK4B;
@@ -446,6 +444,7 @@ class H4LTools {
       std::vector<float> GenPart_pt;
       
       unsigned nElectron,nMuon,nJet,nGenPart,nFsrPhoton,nGenJet;
+      int nanoVersion = 12;
 
 
 };

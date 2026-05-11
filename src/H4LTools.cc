@@ -60,79 +60,42 @@ std::vector<unsigned int> H4LTools::goodElectrons2015_noIso_noBdt(std::vector<un
     return bestElectronindex;
 }
 
-//std::vector<bool> H4LTools::pass_Ele_Id(){
-//    std::vector<bool> tightid;
-//    float cutVal,mvaVal;
-//    cutVal = 1000;
-//    mvaVal = -1;
-    //unsigned nE = (*nElectron).Get()[0];
-//    for (unsigned int i=0; i<Electron_pt.size(); i++){
-//        if(Electron_pt[i]<10){
-//            if(fabs(Electron_eta[i])<0.8) cutVal = eleBDTWPLELP;
-//            if((fabs(Electron_eta[i])>=0.8)&&(fabs(Electron_eta[i])<1.479)) cutVal = eleBDTWPMELP;
-//            if(fabs(Electron_eta[i])>=1.479) cutVal = eleBDTWPHELP;
-//        }
-//        else{
-//            if(fabs(Electron_eta[i])<0.8) cutVal = eleBDTWPLEHP;
-//            if((fabs(Electron_eta[i])>=0.8)&&(fabs(Electron_eta[i])<1.479)) cutVal = eleBDTWPMEHP;
-//            if(fabs(Electron_eta[i])>=1.479) cutVal = eleBDTWPHEHP;
-//        }
-
-//        mvaVal = Electron_mvaFall17V2Iso[i];
-//        if(mvaVal > cutVal){
-//            tightid.push_back(true);
-//        }
-//        else{
-//            tightid.push_back(false);
-//        }
-
-//    }
-//    return tightid;
-//}
-
-std::vector<bool> H4LTools::pass_Ele_Id(const std::string& era, const std::string& wp){
+std::vector<bool> H4LTools::pass_Ele_Id(int nanoVersion){
     std::vector<bool> passid;
+    float cutVal = 1000.;
+    float mvaVal = -999.;
+
     for (unsigned int i = 0; i < Electron_pt.size(); i++){
 
-        if(wp == "wp80") { //wp90 and wp80 for about 90 % and 80 % signal efficiency in each category
-            if(era == "Run2") passid.push_back(Electron_mvaFall17V2Iso_WP80[i]);
-            else if(era == "Run3") passid.push_back(Electron_mvaIso_WP80[i]);
-            else {
-                std::cerr << "[ERROR] Unknown era: " << era << std::endl;
-                passid.push_back(false);
+        // Use SC eta as in ZZAnalysis-style electron BDT definition
+        float fSCeta = fabs(Electron_eta[i] + Electron_deltaEtaSC[i]);
+
+        if (nanoVersion < 14){
+            // Run3 NanoAODv12/v13 style:
+            // Electron_mvaHZZIso + hand cuts
+            if(Electron_pt[i]<10){
+                if(fSCeta<0.8) cutVal = eleBDTWPLELP;
+                if((fSCeta>=0.8)&&(fSCeta<1.479)) cutVal = eleBDTWPMELP;
+                if(fSCeta>=1.479) cutVal = eleBDTWPHELP;
             }
-        }
-        else if(wp == "wp90") {
-            if(era == "Run2") passid.push_back(Electron_mvaFall17V2Iso_WP90[i]);
-            else if(era == "Run3") passid.push_back(Electron_mvaIso_WP90[i]);
-            else {
-                std::cerr << "[ERROR] Unknown era: " << era << std::endl;
-                passid.push_back(false);
+            else{
+                if(fSCeta<0.8) cutVal = eleBDTWPLEHP;
+                if((fSCeta>=0.8)&&(fSCeta<1.479)) cutVal = eleBDTWPMEHP;
+                if(fSCeta>=1.479) cutVal = eleBDTWPHEHP;
             }
+            mvaVal = Electron_mvaHZZIso[i];
+            passid.push_back(mvaVal > cutVal);
         }
-        else {
-            std::cerr << "[ERROR] Unknown WP: " << wp << std::endl;
-            passid.push_back(false);
+        else{
+            // Run3 NanoAODv14+ style:
+            // use predefined HZZ working point
+            passid.push_back(Electron_mvaIso_WPHZZ[i]);
         }
     }
+
     return passid;
 }
 
-
-
-//std::vector<bool> H4LTools::pass_Mu_Id(){
-//    std::vector<bool> tightid;
-    //unsigned nMu = (*nMuon).Get()[0];
-//    for (unsigned int i=0; i<Muon_pt.size(); i++){
-//        if (Muon_pt[i]<MuHighPtBound){
-//            tightid.push_back(Muon_isPFcand[i]);
-//        }
-//        else{
-//            tightid.push_back(Muon_isPFcand[i]||(((Muon_ptErr[i]/Muon_pt[i])<MuTightpTErrorcut)&&(fabs(Muon_dxy[i])<MuTightdxycut)&&(fabs(Muon_dz[i])<MuTightdzcut)&&(Muon_nTrackerLayers[i]>MuTightTrackerLayercut)));
-//        }
-//    }
-//    return tightid;
-//}
 
 std::vector<bool> H4LTools::pass_Mu_Id(const std::string& era, const std::string& method, const std::string& wp) {
     std::vector<bool> passId;
@@ -501,8 +464,8 @@ void H4LTools::LeptonSelection(){
     bestMu = goodMuons2015_noIso_noPf(step1Mu);
     Electronindex = bestEle;
     Muonindex = bestMu;
-    AllEid = pass_Ele_Id("Run3","wp90");//wp90-loose, wp80-tight
-    AllMuid = pass_Mu_Id("Run3","MVA-Based","loose");
+    AllEid = pass_Ele_Id(nanoVersion);
+    AllMuid = pass_Mu_Id("Run3","MVA-Based","tight");
     for (unsigned int iuj=0;iuj<step1Ele.size();iuj++){
         if(AllEid[step1Ele[iuj]]) tighteleforjetidx.push_back(step1Ele[iuj]);
     }
@@ -1006,7 +969,6 @@ bool H4LTools::BuildZZCandidate(){
         if (flag4mu) cutm4l4mu++;
     }//It doesn’t define PassZZSelection; it just selects events within it that fall in the Higgs mass window.
 
-    // 为了尽量保留原4l2j逻辑，这里在4l2j模式下把两条jet作为associated传给MELA
     SimpleParticleCollection_t associated;
     if(analysisMode == "4l2j"){
         unsigned int jet1index = 99, jet2index = 99;
@@ -1190,10 +1152,43 @@ bool H4LTools::ZZSelection(){
     }
 
     if(analysisMode == "2l2j"){
-        // 2l2j: 只要求至少一个Z cand + 至少2 jets
+
         if(Zsize<1){
             return false;
         }
+        // --------------------------------------------------
+        // Define a 2l2j Z candidate as soon as findZCandidate()
+        // Choose the candidate whose mass is closest to nominal Z mass.
+        // --------------------------------------------------
+        unsigned int bestZIdx = 0;
+        float bestDm = fabs(Zlist[0].M() - Zmass);
+
+        for(unsigned int iz=1; iz<Zlist.size(); iz++){
+            float dm = fabs(Zlist[iz].M() - Zmass);
+            if(dm < bestDm){
+                bestDm = dm;
+                bestZIdx = iz;
+            }
+        }
+
+        Z1 = Zlist[bestZIdx];
+        Z1nofsr = Zlistnofsr[bestZIdx];
+
+        pTL1 = Zlep1pt[bestZIdx];
+        etaL1 = Zlep1eta[bestZIdx];
+        phiL1 = Zlep1phi[bestZIdx];
+        massL1 = Zlep1mass[bestZIdx];
+
+        pTL2 = Zlep2pt[bestZIdx];
+        etaL2 = Zlep2eta[bestZIdx];
+        phiL2 = Zlep2phi[bestZIdx];
+        massL2 = Zlep2mass[bestZIdx];
+
+        // -------Check data/MC agreement in 2l2j mode------
+        //if(Z1.Pt() <= 40.0){
+        //    return false;
+        //}
+        // --------------------------------------------------
 
         if(nRawJetsThisEvent >= 2){
             eventPassAtLeastTwoRawJets = true;
@@ -1223,7 +1218,7 @@ bool H4LTools::ZZSelection(){
     }
 
     if(analysisMode == "4l2j"){
-        // 4l2j: 先过4l，再过2j
+      
         foundZZCandidate = BuildZZCandidate();
         if(foundZZCandidate == false){
             return false;

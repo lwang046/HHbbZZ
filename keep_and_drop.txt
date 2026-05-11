@@ -15,7 +15,7 @@ keep BeamSpot*
 # keep nGenJet
 # keep GenJet*
 # keep nGenPart
-# keep GenPart*
+keep GenPart*
 # keep nSubGenJetAK8
 # keep SubGenJetAK8*
 # keep Generator*

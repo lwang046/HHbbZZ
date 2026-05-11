@@ -138,6 +138,23 @@ def main():
         print("ERROR: Could not determine year from input file name.")
         exit(1)
 
+    if isMC:
+        if "NanoAODv12" in first_file:
+            nanoVersion = 12
+        elif "NanoAODv14" in first_file:
+            nanoVersion = 14
+        elif "NanoAODv15" in first_file:
+            nanoVersion = 15
+        else:
+            raise RuntimeError(f"Cannot determine nanoVersion from MC input file name: {first_file}")
+    # For data, we determine nanoVersion based on the run era since the nanoAOD version is not included in the file name.
+    else:
+        if "Run2022" in first_file or "Run2023" in first_file:
+            nanoVersion = 12
+        else:
+            nanoVersion = 15
+    print("Determined nanoVersion: {}".format(nanoVersion))
+    
     # ---------------------------
     # analysisMode-dependent preselection
     # ---------------------------
@@ -148,7 +165,7 @@ def main():
         preselection_cut = "Sum$(Muon_pt>3) + Sum$(Electron_pt>5) >= 4"
 
     # main analysis module
-    modulesToRun.append(HZZAnalysisCppProducer(year, cfgFile, isMC, isFSR, analysisMode))
+    modulesToRun.append(HZZAnalysisCppProducer(year, cfgFile, isMC, isFSR, analysisMode, nanoVersion))
 
     print(("Input json file: {}".format(jsonFileName)))
     print(("Input cfg file: {}".format(cfgFile)))
@@ -186,7 +203,7 @@ def main():
         p = PostProcessor(
             ".",
             testfilelist,
-            # cut = "(Sum$(Muon_pt>3) + Sum$(Electron_pt>5) >= 4) && (nJet>=2)",
+            #cut = "(Sum$(Muon_pt>3) + Sum$(Electron_pt>5) >= 4) && (nJet>=2)",
             cut=preselection_cut,
             branchsel=None,
             modules=modulesToRun,

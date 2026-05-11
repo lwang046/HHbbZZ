@@ -36,6 +36,7 @@ class GenAnalysis{
       std::vector<int> GENlep_status;
       std::vector<int> GENlep_MomId;
       std::vector<int> GENlep_MomMomId;
+      std::vector<int> GENlep_MomMomMomId;
       float GENMH, GENmassZZ, GENpTZZ;
       float Zmass=91.1876;
       double genIsoConeSizeEl, genIsoConeSizeMu;
@@ -117,13 +118,14 @@ class GenAnalysis{
         GENZ_phi.clear(); GENZ_pt.clear(); GENZ_eta.clear(); GENZ_mass.clear();GENZ_MomId.clear();
         GENH_phi.clear(); GENH_pt.clear(); GENH_eta.clear(); GENH_mass.clear();
         GENjet_pt.clear();GENjet_eta.clear();GENjet_phi.clear();GENjet_mass.clear();GENjet_hadronFlavour.clear();b_jets.clear();
-        GENlep_eta.clear();GENlep_pt.clear();GENlep_phi.clear();GENlep_mass.clear();GENlep_id.clear();GENlep_status.clear();GENlep_MomMomId.clear();GENlep_MomId.clear();GENlep_RelIso.clear();
+        GENlep_eta.clear();GENlep_pt.clear();GENlep_phi.clear();GENlep_mass.clear();GENlep_id.clear();GENlep_status.clear();GENlep_MomMomMomId.clear();GENlep_MomMomId.clear();GENlep_MomId.clear();GENlep_RelIso.clear();
         flag4e=0; flag4mu=0; flag2e2mu=0;flagpassZ1=0;flagpassFid=0;
       }
       int total_GEN_lepton_count_allEvents = 0;
       int total_GEN_tau_count_allEvents = 0;
       int motherID(int Genidx);
       int mothermotherID(int Genidx);
+      int mothermothermotherID(int Genidx);
       void SetGenVariables();
       bool mZ1_mZ2(unsigned int& L1, unsigned int& L2, unsigned int& L3, unsigned int& L4, bool makeCuts);
 

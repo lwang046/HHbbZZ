@@ -8,7 +8,7 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 
 
 class HZZAnalysisCppProducer(Module):
-    def __init__(self, year, cfgFile, isMC, isFSR, analysisMode="4l2j"):
+    def __init__(self, year, cfgFile, isMC, isFSR, analysisMode, nanoVersion):
         base = "$CMSSW_BASE/src/PhysicsTools/NanoAODTools/python/postprocessing/analysis/nanoAOD_skim"
         ROOT.gSystem.Load("%s/JHUGenMELA/MELA/data/el9_amd64_gcc12/libJHUGenMELAMELA.so" % base)
         ROOT.gSystem.Load("%s/JHUGenMELA/MELA/data/el9_amd64_gcc12/libjhugenmela.so" % base)
@@ -38,6 +38,7 @@ class HZZAnalysisCppProducer(Module):
         self.year = year
         self.isMC = isMC
         self.analysisMode = analysisMode
+        self.nanoVersion = nanoVersion
         self.genworker = ROOT.GenAnalysis()
 
         with open(cfgFile, 'r') as ymlfile:
@@ -74,6 +75,7 @@ class HZZAnalysisCppProducer(Module):
         self.cfgFile = cfgFile
         self.worker.isFSR = isFSR
         self.worker.SetAnalysisMode(self.analysisMode)
+        self.worker.SetNanoVersion(self.nanoVersion)
         self.print_count = 0
 
     def beginJob(self):
@@ -418,42 +420,44 @@ class HZZAnalysisCppProducer(Module):
                 self.worker.SetElectronsGen(xe.genPartIdx)
 
         branches = [b.GetName() for b in event._tree.GetListOfBranches()]
+        
+        hasHZZ = "Electron_mvaHZZIso" in branches
+        hasWPHZZ = "Electron_mvaIso_WPHZZ" in branches
+        hasDeltaEtaSC = "Electron_deltaEtaSC" in branches
         for xe in electrons:
-            hasFall17 = "Electron_mvaFall17V2Iso_WP80" in branches
-            hasRun3 = "Electron_mvaIso_WP80" in branches
-
-            wp80_Fall17 = xe.mvaFall17V2Iso_WP80 if hasFall17 else False
-            wp90_Fall17 = xe.mvaFall17V2Iso_WP90 if hasFall17 else False
-            wpl_Fall17 = xe.mvaFall17V2Iso_WPL if hasFall17 else False
-            wp80_Run3 = xe.mvaIso_WP80 if hasRun3 else False
-            wp90_Run3 = xe.mvaIso_WP90 if hasRun3 else False
+            
+            deltaEtaSC = xe.deltaEtaSC if hasDeltaEtaSC else 0.
+            mvaHZZIso = xe.mvaHZZIso if hasHZZ else -999.
+            mvaIso_WPHZZ = bool(xe.mvaIso_WPHZZ) if hasWPHZZ else False
+            
 
             self.worker.SetElectrons(
                 xe.pt, xe.eta, xe.phi, xe.mass, xe.dxy, xe.dz, xe.sip3d,
-                wp80_Fall17, wp90_Fall17, wpl_Fall17,
-                wp80_Run3, wp90_Run3, xe.pdgId, xe.pfRelIso03_all
+                deltaEtaSC, mvaHZZIso, mvaIso_WPHZZ,
+                xe.pdgId, xe.pfRelIso03_all
             )
-
+        
         branches = [b.GetName() for b in event._tree.GetListOfBranches()]
+
+        hasCutBased = "Muon_looseId" in branches
+        hasLowPtId = "Muon_mvaLowPtId" in branches
+        hasMvaId = "Muon_mvaId" in branches
+        hasLowPt = "Muon_mvaLowPt" in branches
+
         for xm in muons:
-            hasCutBased = "Muon_looseId" in branches
-            hasLowPtMVA = "Muon_mvaLowPtId" in branches
-            hasMVA_Run2 = "Muon_mvaId" in branches
-            hasMVA_Run3 = "Muon_mvaLowPt" in branches
+            looseId = bool(xm.looseId) if hasCutBased else False
+            mediumId = bool(xm.mediumId) if hasCutBased else False
+            tightId = bool(xm.tightId) if hasCutBased else False
 
-            looseId = xm.looseId if hasCutBased else False
-            mediumId = xm.mediumId if hasCutBased else False
-            tightId = xm.tightId if hasCutBased else False
-
-            mvaLowPtId = xm.mvaLowPtId if hasLowPtMVA else 0
-            mvaId = xm.mvaId if hasMVA_Run2 else 0
-            mvaWP = xm.mvaMuID_WP if hasMVA_Run3 else 0
+            mvaLowPtId = int(xm.mvaLowPtId) if hasLowPtId else 0
+            mvaId = int(xm.mvaId) if hasMvaId else 0
+            mvaLowPt = int(xm.mvaLowPt) if hasLowPt else 0
 
             self.worker.SetMuons(
                 xm.pt, xm.eta, xm.phi, xm.mass, xm.isGlobal, xm.isTracker,
                 xm.dxy, xm.dz, xm.sip3d, xm.ptErr,
                 looseId, mediumId, tightId,
-                mvaLowPtId, mvaId, mvaWP,
+                mvaLowPtId, mvaId, mvaLowPt,
                 xm.nTrackerLayers, xm.isPFcand, xm.pdgId, xm.charge, xm.pfRelIso03_all
             )
 
@@ -473,7 +477,6 @@ class HZZAnalysisCppProducer(Module):
         self.worker.LeptonSelection()
 
         hasTwoTightLeps = ((self.worker.nTightEle >= 2) or (self.worker.nTightMu >= 2))
-        
         if isMC:
             self.genworker.SetGenVariables()
             GENmass4l = self.genworker.GENmass4l
@@ -526,7 +529,6 @@ class HZZAnalysisCppProducer(Module):
         goodJet_phi = []
         goodJet_mass = []
         goodJet_btagRPT = []
-
         for idx in goodJet_idxs:
             goodJet_pt.append(jets[idx].pt)
             goodJet_eta.append(jets[idx].eta)
@@ -633,7 +635,7 @@ class HZZAnalysisCppProducer(Module):
         if self.worker.RecoTwoMuTwoEEvent:
             finalState = 4
 
-        if self.analysisMode in ["4l", "4l2j"] and foundZZCandidate:
+        if foundZZCandidate and self.analysisMode in ["4l", "4l2j"]:
             pTZ1 = self.worker.Z1.Pt()
             etaZ1 = self.worker.Z1.Eta()
             phiZ1 = self.worker.Z1.Phi()
@@ -651,6 +653,26 @@ class HZZAnalysisCppProducer(Module):
             D_L1 = self.worker.D_L1
             D_L1Zg = self.worker.D_L1Zg
 
+        if self.analysisMode == "2l2j" and eventPassZCand:
+            pTZ1 = self.worker.Z1.Pt()
+            etaZ1 = self.worker.Z1.Eta()
+            phiZ1 = self.worker.Z1.Phi()
+            massZ1 = self.worker.Z1.M()
+
+            # no second Z / no 4l discriminants in 2l2j
+            pTZ2 = -99.
+            etaZ2 = -99.
+            phiZ2 = -99.
+            massZ2 = -99.
+
+            D_CP = -99.
+            D_0m = -99.
+            D_0hp = -99.
+            D_int = -99.
+            D_L1 = -99.
+            D_L1Zg = -99.
+            
+        if self.analysisMode in ["4l", "4l2j"] and foundZZCandidate:
             pTL1 = self.worker.pTL1
             etaL1 = self.worker.etaL1
             phiL1 = self.worker.phiL1
