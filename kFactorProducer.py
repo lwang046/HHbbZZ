@@ -13,7 +13,7 @@ class kFactorProducer(Module):
     ggZZ: NNLO/LO
     """
     
-    def __init__(self, year, sample_path="", kfactor_dir="/eos/user/l/liuc/kFactor"):
+    def __init__(self, year, sample_path="", kfactor_dir="/data/kFactor"):
         self.year = year
         self.sample_path = sample_path
         self.kfactor_dir = kfactor_dir
