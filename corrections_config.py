@@ -10,6 +10,7 @@ from PhysicsTools.NATModules.modules.eleScaleRes import eleScaleRes as eleScaleR
 from PhysicsTools.NATModules.modules.muonSF import MuonSF as muonSF_natlib
 from PhysicsTools.NATModules.modules.muonScaleRes import muonScaleRes as muonScaleRes_natlib
 from PhysicsTools.NATModules.modules.puWeightProducer import puWeightProducer as puWeightProducer_natlib
+from PhysicsTools.NATModules.modules.jetId import jetId as jetId_natlib
 from PhysicsTools.NATModules.modules.jetVetoMap import jetVMAP as jetVMAP_natlib
 from PhysicsTools.NATModules.modules.jetCorr import jetJERC as jetJERC_natlib
 from PhysicsTools.NATModules.modules.jetBtag import jetBtag as jetBtag_natlib
@@ -480,6 +481,34 @@ def get_pu_weight_2024(data_tag):
 
     return puWeightProducer_natlib(json, key)
 
+''' 
+Temporarily also recompute Jet_jetId for NanoAODv12 samples.
+This module can be commented out if the recomputation is not needed.
+'''
+def get_jet_id_2022(data_tag):
+    """Recompute Jet_jetId for 2022 pre and postEE NanoAODv12 using JME jetid.json.gz."""
+    if "pre_EE" in data_tag:
+        json_path = "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22CDSep23-Summer22-NanoAODv12/latest/jetid.json.gz"
+    else:
+        json_path = "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22EFGSep23-Summer22EE-NanoAODv12/latest/jetid.json.gz"
+        
+    return jetId_natlib(json_path, "AK4PUPPI")
+
+def get_jet_id_2023(data_tag):
+    """Recompute Jet_jetId for 2023 pre and postBPix NanoAODv12 using JME jetid.json.gz."""
+    if "pre_BPix" in data_tag:
+        json_path = "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23CSep23-Summer23-NanoAODv12/latest/jetid.json.gz"
+    else:
+        json_path = "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23DSep23-Summer23BPix-NanoAODv12/latest/jetid.json.gz"
+        
+    return jetId_natlib(json_path, "AK4PUPPI")
+
+def get_jet_id_2024(data_tag):
+    """Recompute Jet_jetId for 2024 NanoAODv15 using JME jetid.json.gz."""
+
+    json_path = "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/latest/jetid.json.gz"
+
+    return jetId_natlib(json_path, "AK4PUPPI")
 
 def get_jet_veto_map_2022(data_tag):
     """Get jet veto map module for 2022."""
@@ -534,7 +563,7 @@ def get_jet_correction_2022(data_tag, isMC):
     
     if isMC:
         if "pre_EE" in data_tag:
-            folderKey = "Run3-22CDSep23-Summer22-NanoAODv12/latest"
+            folderKey = "Run3-22CDSep23-Summer22-NanoAODv12/2026-04-13"
             L1Key = "Summer22_22Sep2023_V3_MC_L1FastJet_AK4PFPuppi"
             L2Key = "Summer22_22Sep2023_V3_MC_L2Relative_AK4PFPuppi"
             L3Key = "Summer22_22Sep2023_V3_MC_L3Absolute_AK4PFPuppi"
@@ -547,7 +576,7 @@ def get_jet_correction_2022(data_tag, isMC):
             JERKey = "Summer22_22Sep2023_JRV1_MC_PtResolution_AK4PFPuppi"
             JERsfKey = "Summer22_22Sep2023_JRV1_MC_ScaleFactor_AK4PFPuppi"
         else:
-            folderKey = "Run3-22EFGSep23-Summer22EE-NanoAODv12/latest"
+            folderKey = "Run3-22EFGSep23-Summer22EE-NanoAODv12/2026-04-13"
             L1Key = "Summer22EE_22Sep2023_V3_MC_L1FastJet_AK4PFPuppi"
             L2Key = "Summer22EE_22Sep2023_V3_MC_L2Relative_AK4PFPuppi"
             L3Key = "Summer22EE_22Sep2023_V3_MC_L3Absolute_AK4PFPuppi"
@@ -562,7 +591,7 @@ def get_jet_correction_2022(data_tag, isMC):
     else:
         # Data - JER are not applied to data
         if "pre_EE" in data_tag:
-            folderKey = "Run3-22CDSep23-Summer22-NanoAODv12/latest"
+            folderKey = "Run3-22CDSep23-Summer22-NanoAODv12/2026-04-13"
             L1Key = "Summer22_22Sep2023_V3_DATA_L1FastJet_AK4PFPuppi"
             L2Key = "Summer22_22Sep2023_V3_DATA_L2Relative_AK4PFPuppi"
             L3Key = "Summer22_22Sep2023_V3_DATA_L3Absolute_AK4PFPuppi"
@@ -574,7 +603,7 @@ def get_jet_correction_2022(data_tag, isMC):
             JERsfKey = None
         else:
             # For post_EE, would need to handle different runs (E, F, G) - using E as default
-            folderKey = "Run3-22EFGSep23-Summer22EE-NanoAODv12/latest"
+            folderKey = "Run3-22EFGSep23-Summer22EE-NanoAODv12/2026-04-13"
             L1Key = "Summer22EE_22Sep2023_V3_DATA_L1FastJet_AK4PFPuppi"
             L2Key = "Summer22EE_22Sep2023_V3_DATA_L2Relative_AK4PFPuppi"
             L3Key = "Summer22EE_22Sep2023_V3_DATA_L3Absolute_AK4PFPuppi"
@@ -623,7 +652,7 @@ def get_jet_correction_2023(data_tag, isMC):
     
     if isMC:
         if "pre_BPix" in data_tag:
-            folderKey = "Run3-23CSep23-Summer23-NanoAODv12/latest"
+            folderKey = "Run3-23CSep23-Summer23-NanoAODv12/2026-04-13"
             L1Key = "Summer23Prompt23_V3_MC_L1FastJet_AK4PFPuppi"
             L2Key = "Summer23Prompt23_V3_MC_L2Relative_AK4PFPuppi"
             L3Key = "Summer23Prompt23_V3_MC_L3Absolute_AK4PFPuppi"
@@ -636,7 +665,7 @@ def get_jet_correction_2023(data_tag, isMC):
             JERKey = "Summer23Prompt23_RunCv1234_JRV1_MC_PtResolution_AK4PFPuppi"
             JERsfKey = "Summer23Prompt23_RunCv1234_JRV1_MC_ScaleFactor_AK4PFPuppi"
         else:
-            folderKey = "Run3-23DSep23-Summer23BPix-NanoAODv12/latest"
+            folderKey = "Run3-23DSep23-Summer23BPix-NanoAODv12/2026-04-13"
             L1Key = "Summer23BPixPrompt23_V3_MC_L1FastJet_AK4PFPuppi"
             L2Key = "Summer23BPixPrompt23_V3_MC_L2Relative_AK4PFPuppi"
             L3Key = "Summer23BPixPrompt23_V3_MC_L3Absolute_AK4PFPuppi"
@@ -651,7 +680,7 @@ def get_jet_correction_2023(data_tag, isMC):
     else:
         # Data - JER are not applied to data
         if "pre_BPix" in data_tag:
-            folderKey = "Run3-23CSep23-Summer23-NanoAODv12/latest"
+            folderKey = "Run3-23CSep23-Summer23-NanoAODv12/2026-04-13"
             L1Key = "Summer23Prompt23_V3_DATA_L1FastJet_AK4PFPuppi"
             L2Key = "Summer23Prompt23_V3_DATA_L2Relative_AK4PFPuppi"
             L3Key = "Summer23Prompt23_V3_DATA_L3Absolute_AK4PFPuppi"
@@ -662,7 +691,7 @@ def get_jet_correction_2023(data_tag, isMC):
             JERKey = None
             JERsfKey = None
         else:
-            folderKey = "Run3-23DSep23-Summer23BPix-NanoAODv12/latest"
+            folderKey = "Run3-23DSep23-Summer23BPix-NanoAODv12/2026-04-13"
             L1Key = "Summer23BPixPrompt23_V3_DATA_L1FastJet_AK4PFPuppi"
             L2Key = "Summer23BPixPrompt23_V3_DATA_L2Relative_AK4PFPuppi"
             L3Key = "Summer23BPixPrompt23_V3_DATA_L3Absolute_AK4PFPuppi"
@@ -710,7 +739,7 @@ def get_jet_correction_2024(data_tag, isMC):
     ]
     
     if isMC:
-        folderKey = "Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/latest"
+        folderKey = "Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-02"
         L1Key = "Summer24Prompt24_V2_MC_L1FastJet_AK4PFPuppi"
         L2Key = "Summer24Prompt24_V2_MC_L2Relative_AK4PFPuppi"
         L3Key = "Summer24Prompt24_V2_MC_L3Absolute_AK4PFPuppi"
@@ -725,7 +754,7 @@ def get_jet_correction_2024(data_tag, isMC):
         JERsfKey = "Summer23BPixPrompt23_RunD_JRV1_MC_ScaleFactor_AK4PFPuppi"
     else:
         # Data - JER are not applied to data
-        folderKey = "Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/latest"
+        folderKey = "Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-02"
         L1Key = "Summer24Prompt24_V2_DATA_L1FastJet_AK4PFPuppi"
         L2Key = "Summer24Prompt24_V2_DATA_L2Relative_AK4PFPuppi"
         L3Key = "Summer24Prompt24_V2_DATA_L3Absolute_AK4PFPuppi"
@@ -736,7 +765,7 @@ def get_jet_correction_2024(data_tag, isMC):
         JERKey = None
         JERsfKey = None
     
-    json_JERC = "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/latest/jet_jerc.json.gz"
+    json_JERC = "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/2025-12-02/jet_jerc.json.gz"
     json_JERsmear = "/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/JME/jer_smear.json.gz"
     
     # Configuration flags
@@ -848,8 +877,9 @@ def get_corrections_modules(year, data_tag, first_file, isMC, overwritePt):
         modules.append(get_muon_sf_2022(data_tag, isMC))
         modules.append(get_muon_scale_res_2022(data_tag, isMC, overwritePt))
         modules.append(get_electron_scale_res_2022(data_tag, isMC, overwritePt))
-        modules.append(get_jet_veto_map_2022(data_tag))
         modules.append(get_jet_correction_2022(data_tag, isMC))
+        modules.append(get_jet_id_2022(data_tag))
+        modules.append(get_jet_veto_map_2022(data_tag))
         modules.append(get_btag_sf_2022(data_tag, isMC))
     
     elif year == 2023:
@@ -857,8 +887,9 @@ def get_corrections_modules(year, data_tag, first_file, isMC, overwritePt):
         modules.append(get_muon_sf_2023(data_tag, isMC))
         modules.append(get_muon_scale_res_2023(data_tag, isMC, overwritePt))
         modules.append(get_electron_scale_res_2023(data_tag, isMC, overwritePt))
-        modules.append(get_jet_veto_map_2023(data_tag))
         modules.append(get_jet_correction_2023(data_tag, isMC))
+        modules.append(get_jet_id_2023(data_tag))
+        modules.append(get_jet_veto_map_2023(data_tag))
         modules.append(get_btag_sf_2023(data_tag, isMC))
     
     elif year == 2024:
@@ -866,8 +897,9 @@ def get_corrections_modules(year, data_tag, first_file, isMC, overwritePt):
         modules.append(get_muon_sf_2024(data_tag, isMC))
         modules.append(get_muon_scale_res_2024(data_tag, isMC, overwritePt))
         modules.append(get_electron_scale_res_2024(data_tag, isMC, overwritePt))
-        modules.append(get_jet_veto_map_2024(data_tag))
         modules.append(get_jet_correction_2024(data_tag, isMC))
+        modules.append(get_jet_id_2024(data_tag))
+        modules.append(get_jet_veto_map_2024(data_tag))
     
     elif year == 2018:
         modules.append(get_electron_sf_2018(isMC))

@@ -101,7 +101,7 @@ FsrPhoton:
 
 Jet:
   pTcut:
-    30
+    20
   Etacut:
     2.4
   Ncut:
