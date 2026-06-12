@@ -481,28 +481,6 @@ def get_pu_weight_2024(data_tag):
 
     return puWeightProducer_natlib(json, key)
 
-''' 
-Temporarily also recompute Jet_jetId for NanoAODv12 samples.
-This module can be commented out if the recomputation is not needed.
-'''
-def get_jet_id_2022(data_tag):
-    """Recompute Jet_jetId for 2022 pre and postEE NanoAODv12 using JME jetid.json.gz."""
-    if "pre_EE" in data_tag:
-        json_path = "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22CDSep23-Summer22-NanoAODv12/latest/jetid.json.gz"
-    else:
-        json_path = "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22EFGSep23-Summer22EE-NanoAODv12/latest/jetid.json.gz"
-        
-    return jetId_natlib(json_path, "AK4PUPPI")
-
-def get_jet_id_2023(data_tag):
-    """Recompute Jet_jetId for 2023 pre and postBPix NanoAODv12 using JME jetid.json.gz."""
-    if "pre_BPix" in data_tag:
-        json_path = "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23CSep23-Summer23-NanoAODv12/latest/jetid.json.gz"
-    else:
-        json_path = "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23DSep23-Summer23BPix-NanoAODv12/latest/jetid.json.gz"
-        
-    return jetId_natlib(json_path, "AK4PUPPI")
-
 def get_jet_id_2024(data_tag):
     """Recompute Jet_jetId for 2024 NanoAODv15 using JME jetid.json.gz."""
 
@@ -878,7 +856,6 @@ def get_corrections_modules(year, data_tag, first_file, isMC, overwritePt):
         modules.append(get_muon_scale_res_2022(data_tag, isMC, overwritePt))
         modules.append(get_electron_scale_res_2022(data_tag, isMC, overwritePt))
         modules.append(get_jet_correction_2022(data_tag, isMC))
-        modules.append(get_jet_id_2022(data_tag))
         modules.append(get_jet_veto_map_2022(data_tag))
         modules.append(get_btag_sf_2022(data_tag, isMC))
     
@@ -888,7 +865,6 @@ def get_corrections_modules(year, data_tag, first_file, isMC, overwritePt):
         modules.append(get_muon_scale_res_2023(data_tag, isMC, overwritePt))
         modules.append(get_electron_scale_res_2023(data_tag, isMC, overwritePt))
         modules.append(get_jet_correction_2023(data_tag, isMC))
-        modules.append(get_jet_id_2023(data_tag))
         modules.append(get_jet_veto_map_2023(data_tag))
         modules.append(get_btag_sf_2023(data_tag, isMC))
     
