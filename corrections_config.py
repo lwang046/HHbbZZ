@@ -481,12 +481,23 @@ def get_pu_weight_2024(data_tag):
 
     return puWeightProducer_natlib(json, key)
 
+def get_jet_id_2022(data_tag):
+    """Update Jet_jetId for 2022 NanoAODv12 using the Twiki recipe."""
+
+    return jetId_natlib("", nanoVersion=12)
+
+
+def get_jet_id_2023(data_tag):
+    """Update Jet_jetId for 2023 NanoAODv12 using the Twiki recipe."""
+
+    return jetId_natlib("", nanoVersion=12)
+
 def get_jet_id_2024(data_tag):
     """Recompute Jet_jetId for 2024 NanoAODv15 using JME jetid.json.gz."""
 
     json_path = "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/latest/jetid.json.gz"
 
-    return jetId_natlib(json_path, "AK4PUPPI")
+    return jetId_natlib(json_path, nanoVersion=15)
 
 def get_jet_veto_map_2022(data_tag):
     """Get jet veto map module for 2022."""
@@ -856,6 +867,7 @@ def get_corrections_modules(year, data_tag, first_file, isMC, overwritePt):
         modules.append(get_muon_scale_res_2022(data_tag, isMC, overwritePt))
         modules.append(get_electron_scale_res_2022(data_tag, isMC, overwritePt))
         modules.append(get_jet_correction_2022(data_tag, isMC))
+        modules.append(get_jet_id_2022(data_tag))
         modules.append(get_jet_veto_map_2022(data_tag))
         modules.append(get_btag_sf_2022(data_tag, isMC))
     
@@ -865,6 +877,7 @@ def get_corrections_modules(year, data_tag, first_file, isMC, overwritePt):
         modules.append(get_muon_scale_res_2023(data_tag, isMC, overwritePt))
         modules.append(get_electron_scale_res_2023(data_tag, isMC, overwritePt))
         modules.append(get_jet_correction_2023(data_tag, isMC))
+        modules.append(get_jet_id_2023(data_tag))
         modules.append(get_jet_veto_map_2023(data_tag))
         modules.append(get_btag_sf_2023(data_tag, isMC))
     
