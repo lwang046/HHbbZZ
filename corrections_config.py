@@ -23,10 +23,10 @@ from kFactorProducer import create_kfactor_producer
 def get_electron_sf_2022(data_tag, isMC):
     """Get electron scale factor corrections for 2022."""
     if "pre_EE" in data_tag:
-        eleSF = electronSF_natlib("/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/EGM/2022_Summer22/electron.json.gz")
+        eleSF = electronSF_natlib("/cvmfs/cms-griddata.cern.ch/cat/metadata/EGM/Run3-22CDSep23-Summer22-NanoAODv12/latest/electron.json.gz")
         era = "2022Re-recoBCD"
     else:
-        eleSF = electronSF_natlib("/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/EGM/2022_Summer22EE/electron.json.gz")
+        eleSF = electronSF_natlib("/cvmfs/cms-griddata.cern.ch/cat/metadata/EGM/Run3-22EFGSep23-Summer22EE-NanoAODv12/latest/electron.json.gz")
         era = "2022Re-recoE+PromptFG"
     
     set_name = "Electron-ID-SF"
@@ -60,10 +60,10 @@ def get_electron_sf_2022(data_tag, isMC):
 
 def get_muon_sf_2022(data_tag, isMC):
     """Get muon scale factor corrections for 2022."""
-    if "post_EE" not in data_tag:
-        muSF = muonSF_natlib("/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/MUO/2022_Summer22/muon_Z.json.gz")
+    if "pre_EE" in data_tag:
+        muSF = muonSF_natlib("/cvmfs/cms-griddata.cern.ch/cat/metadata/MUO/Run3-22CDSep23-Summer22-NanoAODv12/latest/muon_Z.json.gz")
     else:
-        muSF = muonSF_natlib("/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/MUO/2022_Summer22EE/muon_Z.json.gz")
+        muSF = muonSF_natlib("/cvmfs/cms-griddata.cern.ch/cat/metadata/MUO/Run3-22EFGSep23-Summer22EE-NanoAODv12/latest/muon_Z.json.gz")
     
     # ============================================================
     # ID SFs
@@ -114,9 +114,9 @@ def get_muon_sf_2022(data_tag, isMC):
 def get_muon_scale_res_2022(data_tag, isMC, overwritePt):
     """Get muon scale/resolution corrections for 2022."""
     if "pre_EE" in data_tag:
-        muonScale_json = "/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/MUO/2022_Summer22/muon_scalesmearing.json.gz"
+        muonScale_json = "/cvmfs/cms-griddata.cern.ch/cat/metadata/MUO/Run3-22CDSep23-Summer22-NanoAODv12/latest/muon_scalesmearing.json.gz"
     else:
-        muonScale_json = "/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/MUO/2022_Summer22EE/muon_scalesmearing.json.gz"
+        muonScale_json = "/cvmfs/cms-griddata.cern.ch/cat/metadata/MUO/Run3-22EFGSep23-Summer22EE-NanoAODv12/latest/muon_scalesmearing.json.gz"
     
     return muonScaleRes_natlib(muonScale_json, is_mc=isMC, overwritePt=overwritePt, minPt=3.)
 
@@ -124,13 +124,13 @@ def get_muon_scale_res_2022(data_tag, isMC, overwritePt):
 def get_electron_scale_res_2022(data_tag, isMC, overwritePt):
     """Get electron scale/resolution corrections for 2022."""
     if "pre_EE" in data_tag:
-        eleScale_json = "/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/EGM/2022_Summer22/electronSS_EtDependent.json.gz"
-        scaleKey = "EGMScale_Compound_Ele_2022preEE"
-        smearKey = "EGMSmearAndSyst_ElePTsplit_2022preEE"
+        eleScale_json = "/cvmfs/cms-griddata.cern.ch/cat/metadata/EGM/Run3-22CDSep23-Summer22-NanoAODv12/latest/electronSS_EtDependent.json.gz"
+        scaleKey = "Scale"
+        smearKey = "SmearAndSyst"
     else:
-        eleScale_json = "/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/EGM/2022_Summer22EE/electronSS_EtDependent.json.gz"
-        scaleKey = "EGMScale_Compound_Ele_2022postEE"
-        smearKey = "EGMSmearAndSyst_ElePTsplit_2022postEE"
+        eleScale_json = "/cvmfs/cms-griddata.cern.ch/cat/metadata/EGM/Run3-22EFGSep23-Summer22EE-NanoAODv12/latest/electronSS_EtDependent.json.gz"
+        scaleKey = "Scale"
+        smearKey = "SmearAndSyst"
     
     return eleScaleRes_natlib(eleScale_json, scaleKey, smearKey, overwritePt)
 
@@ -138,10 +138,10 @@ def get_electron_scale_res_2022(data_tag, isMC, overwritePt):
 def get_electron_sf_2023(data_tag, isMC):
     """Get electron scale factor corrections for 2023."""
     if "pre_BPix" in data_tag:
-        eleSF = electronSF_natlib("/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/EGM/2023_Summer23/electron.json.gz")
+        eleSF = electronSF_natlib("/cvmfs/cms-griddata.cern.ch/cat/metadata/EGM/Run3-23CSep23-Summer23-NanoAODv12/latest/electron.json.gz")
         era = "2023PromptC"
     else:
-        eleSF = electronSF_natlib("/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/EGM/2023_Summer23BPix/electron.json.gz")
+        eleSF = electronSF_natlib("/cvmfs/cms-griddata.cern.ch/cat/metadata/EGM/Run3-23DSep23-Summer23BPix-NanoAODv12/latest/electron.json.gz")
         era = "2023PromptD"
     
     set_name = "Electron-ID-SF"
@@ -176,10 +176,10 @@ def get_electron_sf_2023(data_tag, isMC):
 
 def get_muon_sf_2023(data_tag, isMC):
     """Get muon scale factor corrections for 2023."""
-    if "post_BPix" not in data_tag:
-        muSF = muonSF_natlib("/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/MUO/2023_Summer23/muon_Z.json.gz")
+    if "pre_BPix" in data_tag:
+        muSF = muonSF_natlib("/cvmfs/cms-griddata.cern.ch/cat/metadata/MUO/Run3-23CSep23-Summer23-NanoAODv12/latest/muon_Z.json.gz")
     else:
-        muSF = muonSF_natlib("/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/MUO/2023_Summer23BPix/muon_Z.json.gz")
+        muSF = muonSF_natlib("/cvmfs/cms-griddata.cern.ch/cat/metadata/MUO/Run3-23DSep23-Summer23BPix-NanoAODv12/latest/muon_Z.json.gz")
     
     # ============================================================
     # ID SFs
@@ -229,23 +229,23 @@ def get_muon_sf_2023(data_tag, isMC):
 def get_muon_scale_res_2023(data_tag, isMC, overwritePt):
     """Get muon scale/resolution corrections for 2023."""
     if "pre_BPix" in data_tag:
-        muon_json = "/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/MUO/2023_Summer23/muon_scalesmearing.json.gz"
+        muon_json = "/cvmfs/cms-griddata.cern.ch/cat/metadata/MUO/Run3-23CSep23-Summer23-NanoAODv12/latest/muon_scalesmearing.json.gz"
     else:
-        muon_json = "/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/MUO/2023_Summer23BPix/muon_scalesmearing.json.gz"
+        muon_json = "/cvmfs/cms-griddata.cern.ch/cat/metadata/MUO/Run3-23DSep23-Summer23BPix-NanoAODv12/latest/muon_scalesmearing.json.gz"
     
     return muonScaleRes_natlib(muon_json, is_mc=isMC, overwritePt=overwritePt, minPt=3.)
 
 
 def get_electron_scale_res_2023(data_tag, isMC, overwritePt):
     """Get electron scale/resolution corrections for 2023."""
-    if "post_BPix" not in data_tag:
-        json_path = "/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/EGM/2023_Summer23/electronSS_EtDependent.json.gz"
-        scaleKey = "EGMScale_Compound_Ele_2023preBPIX"
-        smearKey = "EGMSmearAndSyst_ElePTsplit_2023preBPIX"
+    if "pre_BPix" in data_tag:
+        json_path = "/cvmfs/cms-griddata.cern.ch/cat/metadata/EGM/Run3-23CSep23-Summer23-NanoAODv12/latest/electronSS_EtDependent.json.gz"
+        scaleKey = "Scale"
+        smearKey = "SmearAndSyst"
     else:
-        json_path = "/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/EGM/2023_Summer23BPix/electronSS_EtDependent.json.gz"
-        scaleKey = "EGMScale_Compound_Ele_2023postBPIX"
-        smearKey = "EGMSmearAndSyst_ElePTsplit_2023postBPIX"
+        json_path = "/cvmfs/cms-griddata.cern.ch/cat/metadata/EGM/Run3-23DSep23-Summer23BPix-NanoAODv12/latest/electronSS_EtDependent.json.gz"
+        scaleKey = "Scale"
+        smearKey = "SmearAndSyst"
     
     return eleScaleRes_natlib(json_path, scaleKey, smearKey, overwritePt)
 
@@ -486,11 +486,32 @@ def get_jet_id_2022(data_tag):
 
     return jetId_natlib("", nanoVersion=12)
 
+def get_jet_id_2023(data_tag, nanoVersion):
+    """
+    Recompute Jet_jetId for 2023.
 
-def get_jet_id_2023(data_tag):
-    """Update Jet_jetId for 2023 NanoAODv12 using the Twiki recipe."""
+    NanoAODv12:
+      Use the Twiki recipe, because v12 does not contain all inputs needed by the JME jetid.json.gz correction.
 
-    return jetId_natlib("", nanoVersion=12)
+    NanoAODv13 and above:
+      Use the JME jetid.json.gz, similar to NanoAODv15.
+    """
+
+    if nanoVersion == 12:
+        return jetId_natlib("", nanoVersion=12)
+
+    if nanoVersion >= 13:
+        if "pre_BPix" in data_tag:
+            json_path = "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23CSep23-Summer23-NanoAODv12/latest/jetid.json.gz"
+        else:
+            json_path = "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-23DSep23-Summer23BPix-NanoAODv12/latest/jetid.json.gz"
+
+        if not os.path.exists(json_path):
+            raise RuntimeError(f"Cannot find 2023 NanoAODv{nanoVersion} JetID JSON: {json_path}")
+
+        return jetId_natlib(json_path, nanoVersion=nanoVersion)
+
+    raise RuntimeError(f"Unsupported NanoAOD version for 2023 JetID: {nanoVersion}")
 
 def get_jet_id_2024(data_tag):
     """Recompute Jet_jetId for 2024 NanoAODv15 using JME jetid.json.gz."""
@@ -502,7 +523,7 @@ def get_jet_id_2024(data_tag):
 def get_jet_veto_map_2022(data_tag):
     """Get jet veto map module for 2022."""
     if "pre_EE" in data_tag:
-        json_path = "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22CDSep23-Summer22-NanoAODv12/2025-09-23/jetvetomaps.json.gz"
+        json_path = "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22CDSep23-Summer22-NanoAODv12/latest/jetvetomaps.json.gz"
         corrName = "Summer22_23Sep2023_RunCD_V1"
     else:
         json_path = "/cvmfs/cms-griddata.cern.ch/cat/metadata/JME/Run3-22EFGSep23-Summer22EE-NanoAODv12/latest/jetvetomaps.json.gz"
@@ -771,7 +792,7 @@ def get_jet_correction_2024(data_tag, isMC):
         overwritePt, usePhiDependentJEC, useRunDependentJEC
     )
 
-
+'''
 _btag_data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "btag")
 
 # Tagger settings for RobustParTAK4B Medium WP (Run 3 only).
@@ -819,6 +840,7 @@ def get_btag_sf_2023(data_tag, isMC):
         json_SF=json_SF,
         json_eff=json_eff,
     )
+'''
 
 def get_kfactor_module(year, file_path, kfactor_dir=None):
     """
@@ -839,7 +861,7 @@ def get_kfactor_module(year, file_path, kfactor_dir=None):
         print(f"[corrections_config] Sample does not require k-factors")
         return None
 
-def get_corrections_modules(year, data_tag, first_file, isMC, overwritePt):
+def get_corrections_modules(year, data_tag, first_file, isMC, overwritePt, nanoVersion):
     """
     Get all correction modules for a given year and data tag.
     
@@ -869,7 +891,7 @@ def get_corrections_modules(year, data_tag, first_file, isMC, overwritePt):
         modules.append(get_jet_correction_2022(data_tag, isMC))
         modules.append(get_jet_id_2022(data_tag))
         modules.append(get_jet_veto_map_2022(data_tag))
-        modules.append(get_btag_sf_2022(data_tag, isMC))
+        #modules.append(get_btag_sf_2022(data_tag, isMC))
     
     elif year == 2023:
         modules.append(get_electron_sf_2023(data_tag, isMC))
@@ -877,12 +899,12 @@ def get_corrections_modules(year, data_tag, first_file, isMC, overwritePt):
         modules.append(get_muon_scale_res_2023(data_tag, isMC, overwritePt))
         modules.append(get_electron_scale_res_2023(data_tag, isMC, overwritePt))
         modules.append(get_jet_correction_2023(data_tag, isMC))
-        modules.append(get_jet_id_2023(data_tag))
+        modules.append(get_jet_id_2023(data_tag, nanoVersion))
         modules.append(get_jet_veto_map_2023(data_tag))
-        modules.append(get_btag_sf_2023(data_tag, isMC))
+        #modules.append(get_btag_sf_2023(data_tag, isMC))
     
     elif year == 2024:
-        modules.append(get_electron_sf_2024(data_tag, isMC))
+        modules.extend(get_electron_sf_2024(data_tag, isMC))
         modules.append(get_muon_sf_2024(data_tag, isMC))
         modules.append(get_muon_scale_res_2024(data_tag, isMC, overwritePt))
         modules.append(get_electron_scale_res_2024(data_tag, isMC, overwritePt))
