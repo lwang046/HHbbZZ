@@ -8,6 +8,8 @@ Used for analysis of 2022 data and beyond
 
 Please use **CMSSW_13_3_3**. 
 
+Recent correction files require correctionlib >= 2.6, so CMSSW_14_1_1 or later is required.
+
 Download and execute the setup script:
 ```
 cmsrel CMSSW_13_3_3
