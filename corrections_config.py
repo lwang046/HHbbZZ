@@ -125,12 +125,11 @@ def get_electron_scale_res_2022(data_tag, isMC, overwritePt):
     """Get electron scale/resolution corrections for 2022."""
     if "pre_EE" in data_tag:
         eleScale_json = "/cvmfs/cms-griddata.cern.ch/cat/metadata/EGM/Run3-22CDSep23-Summer22-NanoAODv12/latest/electronSS_EtDependent.json.gz"
-        scaleKey = "Scale"
-        smearKey = "SmearAndSyst"
+
     else:
         eleScale_json = "/cvmfs/cms-griddata.cern.ch/cat/metadata/EGM/Run3-22EFGSep23-Summer22EE-NanoAODv12/latest/electronSS_EtDependent.json.gz"
-        scaleKey = "Scale"
-        smearKey = "SmearAndSyst"
+    scaleKey = "Scale"
+    smearKey = "SmearAndSyst" if isMC else None
     
     return eleScaleRes_natlib(eleScale_json, scaleKey, smearKey, overwritePt)
 
@@ -240,12 +239,11 @@ def get_electron_scale_res_2023(data_tag, isMC, overwritePt):
     """Get electron scale/resolution corrections for 2023."""
     if "pre_BPix" in data_tag:
         json_path = "/cvmfs/cms-griddata.cern.ch/cat/metadata/EGM/Run3-23CSep23-Summer23-NanoAODv12/latest/electronSS_EtDependent.json.gz"
-        scaleKey = "Scale"
-        smearKey = "SmearAndSyst"
+
     else:
         json_path = "/cvmfs/cms-griddata.cern.ch/cat/metadata/EGM/Run3-23DSep23-Summer23BPix-NanoAODv12/latest/electronSS_EtDependent.json.gz"
-        scaleKey = "Scale"
-        smearKey = "SmearAndSyst"
+    scaleKey = "Scale"
+    smearKey = "SmearAndSyst" if isMC else None
     
     return eleScaleRes_natlib(json_path, scaleKey, smearKey, overwritePt)
 
@@ -296,7 +294,7 @@ def get_electron_scale_res_2024(data_tag, isMC, overwritePt):
 
     json_path = "/cvmfs/cms-griddata.cern.ch/cat/metadata/EGM/Run3-24CDEReprocessingFGHIPrompt-Summer24-NanoAODv15/latest/electronSS_EtDependent.json.gz"
     scaleKey = "Scale"
-    smearKey = "SmearAndSyst"
+    smearKey = "SmearAndSyst" if isMC else None
 
     return eleScaleRes_natlib(json_path, scaleKey, smearKey, overwritePt)
 
