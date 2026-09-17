@@ -12,6 +12,8 @@ class H4LTools {
       float eleLoosedxycut,eleLoosedzcut,MuLoosedxycut,MuLoosedzcut;
       float fsrphotonPtcut,fsrphotonEtacut,fsrphotonIsocut,JetPtcut,JetEtacut;
       int JetNcut;
+      // NanoAOD indices of the exact leptons used in jet cleaning.
+      std::vector<unsigned int> jetCleaningElectronIdx, jetCleaningMuonIdx;
       float btagger1_DJ,btagger1_PN,btagger1_RPT,btagger1_UPT,btagger2_DJ,btagger2_PN,btagger2_RPT,btagger2_UPT,invjj;
       float eleBDTWPLELP,eleBDTWPMELP,eleBDTWPHELP,eleBDTWPLEHP,eleBDTWPMEHP,eleBDTWPHEHP;
       bool RecoFourMuEvent, RecoFourEEvent, RecoTwoETwoMuEvent, RecoTwoMuTwoEEvent;
@@ -262,6 +264,7 @@ class H4LTools {
         Zlep1chg.clear(); Zlep2chg.clear();
         Zlep1ptNoFsr.clear(); Zlep1etaNoFsr.clear(); Zlep1phiNoFsr.clear(); Zlep1massNoFsr.clear();
         Zlep2ptNoFsr.clear(); Zlep2etaNoFsr.clear(); Zlep2phiNoFsr.clear(); Zlep2massNoFsr.clear();
+        jetCleaningElectronIdx.clear(); jetCleaningMuonIdx.clear();
         jetidx.clear(); lep_genindex.clear(); TightElelep_index.clear();TightMulep_index.clear();
         Elechg.clear(); Muchg.clear(); TightEleindex.clear(); TightMuindex.clear();
         for (int i=0; i<4; i++) {lep_Hindex[i]=-1;}

@@ -128,3 +128,9 @@ scramv1 b -j 4
    ```
 
 ## Few important points
+
+## Inclusive 4l skims
+
+For production that retains jets for later dijet selections, use `--mode 4l`.
+See [inclusive 4l and downstream jet studies](docs/inclusive_4l_jets.md) for
+retained branches, jet-only commands and validation checks.

@@ -291,6 +291,8 @@ void H4LTools::LeptonSelection(){
     for (unsigned int juj=0;juj<step1Mu.size();juj++){
         if(AllMuid[step1Mu[juj]]) tightmuforjetidx.push_back(step1Mu[juj]);
     }
+    jetCleaningElectronIdx = tighteleforjetidx;
+    jetCleaningMuonIdx = tightmuforjetidx;
     jetidx = SelectedJets(tighteleforjetidx,tightmuforjetidx);
 
     for(unsigned int ie=0; ie<Electronindex.size();ie++){
