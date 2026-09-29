@@ -61,7 +61,7 @@ std::vector<unsigned int> H4LTools::goodElectrons2015_noIso_noBdt(std::vector<un
     return bestElectronindex;
 }
 
-std::vector<bool> H4LTools::pass_Ele_Id(){
+std::vector<bool> H4LTools::pass_Ele_Id(int nanoVersion){
     std::vector<bool> passid;
 
     for (unsigned int i = 0; i < Electron_pt.size(); i++){
@@ -291,6 +291,8 @@ void H4LTools::LeptonSelection(){
     for (unsigned int juj=0;juj<step1Mu.size();juj++){
         if(AllMuid[step1Mu[juj]]) tightmuforjetidx.push_back(step1Mu[juj]);
     }
+    jetCleaningElectronIdx = tighteleforjetidx;
+    jetCleaningMuonIdx = tightmuforjetidx;
     jetidx = SelectedJets(tighteleforjetidx,tightmuforjetidx);
 
     for(unsigned int ie=0; ie<Electronindex.size();ie++){

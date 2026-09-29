@@ -112,7 +112,7 @@ keep GEN*
 keep njet*
 keep lep*
 keep invjj
-#keep goodJet*
+keep goodJet*
 keep Flag_JetVetoed*
 keep mass4e
 keep mass4mu
@@ -126,3 +126,8 @@ keep ggZZ*
 #
 #    check 2l2j
 keep eventPass*
+# Inputs retained for downstream jet studies after the 4l event selection.
+keep nElectron
+keep nMuon
+keep Rho_*
+keep fixedGridRho*

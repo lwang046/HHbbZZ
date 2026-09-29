@@ -85,3 +85,16 @@ keep mass2e2mu
 #
 #    check 2l2j
 keep eventPass*
+
+# Preserve all jets/leptons of retained events, not only the selected dijet.
+keep nElectron
+keep Electron*
+keep nMuon
+keep Muon*
+keep nJet
+keep Jet*
+keep ngoodJets
+keep goodJet*
+keep Flag_JetVetoed*
+keep Rho_*
+keep fixedGridRho*
