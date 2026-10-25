@@ -16,6 +16,13 @@ mkdir -p "$WORK"
 git clone -q https://github.com/cms-nanoAOD/nanoAOD-tools.git "$WORK/deps/NanoAODTools"
 git clone -q https://github.com/cms-cat/nanoAOD-tools-modules.git "$WORK/deps/NATModules"
 
+# NATModules includes Boost headers without declaring boost in its BuildFile; lxplus
+# hides this with system headers, the container does not.
+grep -q '<use name="boost"/>' "$WORK/deps/NATModules/BuildFile.xml" ||
+  sed -i '1i <use name="boost"/>' "$WORK/deps/NATModules/BuildFile.xml"
+# haddnano.py calls "python", which EL9 lacks; post_proc.py needs it for skimmed_nano.root.
+sed -i '1s|.*|#!/usr/bin/env python3|' "$WORK/deps/NanoAODTools/scripts/haddnano.py"
+
 mapfile -t inputs < <(find /inputs -name '*.root' | sort)
 [ "${#inputs[@]}" -gt 0 ] || { echo "no .root files under /inputs"; exit 1; }
 
