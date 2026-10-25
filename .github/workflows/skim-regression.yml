@@ -45,7 +45,7 @@ jobs:
       - name: Compare outputs
         run: |
           python3 -m venv "$RUNNER_TEMP/venv"
-          "$RUNNER_TEMP/venv/bin/pip" install -q uproot awkward numpy
+          "$RUNNER_TEMP/venv/bin/pip" install -q uproot awkward numpy matplotlib
           set +e
           "$RUNNER_TEMP/venv/bin/python" ci/compare_skims.py skim/base skim/pr --report skim/report.md
           code=$?
@@ -56,6 +56,14 @@ jobs:
             exit 0
           fi
           exit "$code"
+
+      # Overlay histograms (jets, leptons, b-tag scores, masses); PNG/PDF go to the artifact.
+      - name: Plot distributions
+        if: always() && hashFiles('skim/base/*.root') != '' && hashFiles('skim/pr/*.root') != ''
+        run: |
+          "$RUNNER_TEMP/venv/bin/python" ci/plot_skims.py skim/base skim/pr \
+            --outdir skim/plots --summary skim/plots_summary.md
+          cat skim/plots_summary.md >> "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/upload-artifact@v6
         if: always()
