@@ -17,8 +17,9 @@ import numpy as np
 import uproot
 from matplotlib.backends.backend_pdf import PdfPages
 
-# Analysis code fills these with -999 (or similar) when an object is missing.
-SENTINEL = -900.0
+# Analysis code fills missing objects with -99 (leptons, Z) or -999 (jets, b tags).
+# Events kept only by a momentum variation carry these in the nominal branches.
+SENTINEL = -99.0
 
 # (name, x-axis label, bin edges); a tuple name is summed per event.
 VARIABLES = [
@@ -63,7 +64,7 @@ def values(tree, name):
     arrs = [tree[n].array(library="ak") for n in names]
     arr = arrs[0] if len(arrs) == 1 else sum(arrs[1:], arrs[0])
     flat = ak.to_numpy(ak.flatten(arr, axis=None)).astype(np.float64)
-    return flat[np.isfinite(flat) & (flat > SENTINEL)]
+    return flat[np.isfinite(flat) & (flat > SENTINEL + 0.5)]
 
 
 def plot_one(ref, new, label, edges, title):
@@ -74,11 +75,11 @@ def plot_one(ref, new, label, edges, title):
     for side, vals, color in (("base", ref, "black"), ("PR", new, "tab:red")):
         if vals is None:
             continue
-        h, _ = np.histogram(np.clip(vals, edges[0], np.nextafter(edges[-1], edges[0])), bins=edges)
+        h, _ = np.histogram(np.minimum(vals, np.nextafter(edges[-1], edges[0])), bins=edges)
         counts[side] = h
         top.stairs(h, edges, color=color, linewidth=1.5,
                    label=f"{side}: {len(vals)} entries, mean {vals.mean():.3g}" if len(vals) else f"{side}: 0 entries")
-    top.set_ylabel("entries (overflow in last bin)")
+    top.set_ylabel("entries (underflow dropped, overflow in last bin)")
     top.set_title(title, fontsize=9)
     top.legend(fontsize=8)
 
@@ -129,8 +130,11 @@ def main():
         out += [f"## {sample}", "", "| variable | base | PR |", "|---|---|---|"]
         with PdfPages(args.outdir / f"{sample}.pdf") as pdf:
             for name, label, edges in VARIABLES:
-                ref, new = values(ref_tree, name), values(new_tree, name)
-                if ref is None and new is None:
+                # Values below the axis (e.g. mass4l=0, b-tag defaults -1/-3) are dropped
+                # from plots and means; values above it go into the last bin.
+                ref, new = (None if v is None else v[v >= edges[0]]
+                            for v in (values(ref_tree, name), values(new_tree, name)))
+                if all(v is None or len(v) == 0 for v in (ref, new)):
                     continue
                 key = var_key(name)
                 fig = plot_one(ref, new, label, edges, f"{sample}: {key}")
