@@ -71,8 +71,15 @@ def compare_file(ref_path, new_path, tree, out):
     common = sorted(ri.keys() & ni.keys())
     r_idx = np.array([ri[k] for k in common], dtype=np.int64)
     n_idx = np.array([ni[k] for k in common], dtype=np.int64)
+    # A branch that switched between scalar and array cannot be compared value by value.
+    rank_changed = sorted(b for b in rb & nb if ref[b].ndim != new[b].ndim)
+    if rank_changed:
+        ok = False
+        out.append("- branches changed between scalar and array: " + ", ".join(
+            f"{b} (ndim {ref[b].ndim} -> {new[b].ndim})" for b in rank_changed))
+
     rows = []
-    for b in sorted(rb & nb):
+    for b in sorted((rb & nb) - set(rank_changed)):
         m = mismatch_per_event(ref[b][r_idx], new[b][n_idx])
         if m.any():
             ok = False
