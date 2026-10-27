@@ -1,5 +1,5 @@
 #!/bin/bash
-# Runs inside the cmssw/el9 container. Follows README steps 1-4 twice, once for the
+# Runs inside the cmssw/el9 container. Follows README steps 1-5 twice, once for the
 # base-branch code and once for the PR code, each in its own CMSSW area.
 # Mounts: /src/{base,pr} = code, /inputs = test files, /out = skim outputs.
 set -eo pipefail
@@ -15,6 +15,8 @@ mkdir -p "$WORK"
 # Step 2 dependencies, cloned once so both areas use identical versions.
 git clone -q https://github.com/cms-nanoAOD/nanoAOD-tools.git "$WORK/deps/NanoAODTools"
 git clone -q https://github.com/cms-cat/nanoAOD-tools-modules.git "$WORK/deps/NATModules"
+# Step 4 dependency: JHUGenMELA, needed for LHEMela_costhetastar in qqZZ samples.
+git clone -q --branch v2.4.2 --depth 1 https://github.com/JHUGen/JHUGenMELA.git "$WORK/deps/JHUGenMELA"
 
 # NATModules includes Boost headers without declaring boost in its BuildFile, and
 # MuonScaRe.cc uses cout without <iostream>; lxplus hides both with system headers,
@@ -30,29 +32,40 @@ mapfile -t inputs < <(find /inputs -name '*.root' | sort)
 [ "${#inputs[@]}" -gt 0 ] || { echo "no .root files under /inputs"; exit 1; }
 
 for side in base pr; do
-  # Step 1: CMSSW release
-  cd "$WORK"
-  scram project -n "$side" CMSSW "$CMSSW_RELEASE"
-  cd "$WORK/$side/src"
-  eval "$(scram runtime -sh)"
+  # Subshell per side: each CMSSW and MELA environment stays out of the other side.
+  (
+    # Step 1: CMSSW release
+    cd "$WORK"
+    scram project -n "$side" CMSSW "$CMSSW_RELEASE"
+    cd "$WORK/$side/src"
+    eval "$(scram runtime -sh)"
 
-  # Step 2: nanoAOD-tools and NAT modules
-  mkdir -p PhysicsTools
-  cp -r "$WORK/deps/NanoAODTools" PhysicsTools/NanoAODTools
-  cp -r "$WORK/deps/NATModules" PhysicsTools/NATModules
+    # Step 2: nanoAOD-tools and NAT modules
+    mkdir -p PhysicsTools
+    cp -r "$WORK/deps/NanoAODTools" PhysicsTools/NanoAODTools
+    cp -r "$WORK/deps/NATModules" PhysicsTools/NATModules
 
-  # Step 3: this repository (base or PR version), then build
-  mkdir -p "$PKG"
-  cp -r "/src/$side/." "$PKG/"
-  scram b -j "$(nproc)"
-  eval "$(scram runtime -sh)"
+    # Step 3: this repository (base or PR version), then build
+    mkdir -p "$PKG"
+    cp -r "/src/$side/." "$PKG/"
+    scram b -j "$(nproc)"
+    eval "$(scram runtime -sh)"
 
-  # Step 4: run the skim on each test input
-  mkdir -p "/out/$side"
-  cd "$CMSSW_BASE/src/$PKG"
-  for f in "${inputs[@]}"; do
-    python3 post_proc.py -i "$f" $SKIM_ARGS
-    mv skimmed_nano.root "/out/$side/$(basename "$f")"
-    rm -f ./*_Skim.root
-  done
+    # Step 4: MELA package, built inside this CMSSW environment
+    cd "$CMSSW_BASE/src/$PKG"
+    cp -r "$WORK/deps/JHUGenMELA" JHUGenMELA
+    (cd JHUGenMELA && ./setup.sh)
+
+    # Step 5: run the skim on each test input, with the MELA environment where the code
+    # provides its setup script (older base-branch code does not)
+    mkdir -p "/out/$side"
+    if [ -f setup_mela_env.sh ]; then
+      source setup_mela_env.sh
+    fi
+    for f in "${inputs[@]}"; do
+      python3 post_proc.py -i "$f" $SKIM_ARGS
+      mv skimmed_nano.root "/out/$side/$(basename "$f")"
+      rm -f ./*_Skim.root
+    done
+  )
 done
