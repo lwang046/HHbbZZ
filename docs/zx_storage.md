@@ -122,6 +122,18 @@ FR-only events have these flags false and must not enter SR histograms merely
 because they are present in Events. Existing application CRs still require >=2
 cleaned jets; this patch does not make the 0/1-jet four-lepton CR inclusive.
 
+`passedZXCR2P1FSelection` keeps its original with-SIP fail-region meaning:
+exactly three `ZXLoose` leptons, a tight OSSF Z tag within 7 GeV of the Z
+mass, tag pT>20/10 GeV, a non-tight third lepton, the existing bare-pair cuts,
+finite 0<=MET<25 GeV, and at least max(2, Jet.Ncut) jets cleaned against all
+three dressed legs. It is false for tight probes, no-SIP-only probes, and
+events failing the cleaned-jet requirement, even when storage keeps them.
+Use the full object collections and layer masks to measure the wider FR
+pass/fail denominator. `passedZPlusLStorage` describes retention; it does not
+replace this legacy physics-region flag. The validator independently rebuilds
+the 2P1F decision from saved momenta, FSR, masks, MET and jets, and requires
+agreement with the exclusive CR flags, `isZXCR` and nominal `Sel_CRtype`.
+
 This stores the inputs to measure FR and subtract matching prompt MC; it does
 not calculate fake rates, prompt-subtraction weights or final Z+X templates.
 In particular, tight muons in production still use SIP<8, not SIP<4; all

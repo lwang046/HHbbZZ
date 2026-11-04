@@ -1,5 +1,25 @@
 # Z+X retention validation and storage budget
 
+## 2026-11-04: focused legacy 2P1F flag check
+
+The producer's `passedZXCR2P1FSelection` logic is unchanged. The persisted
+validator now independently reconstructs its with-SIP three-lepton selection,
+FSR-dressed tag kinematics, failing probe, MET and candidate-cleaned jets.
+It also checks exclusive nominal CR flags against `isZXCR` and `Sel_CRtype`.
+Thirteen existing native outputs (data, WZ, DY, TT, qqZZ, ggZZ, a storage-off
+control and the five EGamma/Muon/MuonEG prefixes) pass all 2,768 event checks,
+including 96 positive 2P1F flags. The five data-stream prefixes contribute 242
+events and 25 positive flags. These are checked rows across fixtures, not
+independent physics yields or a fake-rate measurement.
+
+`tests/check_zx_2p1f_root.py` additionally passes 16 real-worker cases:
+positive fail-probe selection, zero/one cleaned jet, probe-jet overlap, tight
+probe, SIP-failing probe, four loose leptons, same-sign tags, narrow-Z failure,
+MET boundaries/invalid values, and same-worker reset after an accepted event.
+Calling the new no-SIP storage methods preserves the nominal flags and
+candidate indices. Runtime: CMSSW_15_0_2, ROOT 6.32.11, managed Python 3.9.23.
+All 27 local unit tests also pass.
+
 The tables below record the **2026-10-29 schemaVersion 2** SIP-limited default.
 The 2026-10-31 schemaVersion 3 adds no-SIP loose masks, the union of both
 three-loose FR envelopes and separate no-SIP application inputs. The old full
